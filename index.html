@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Moonify</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -41,8 +42,8 @@
     .search {
       width: 100%;
       padding: 14px;
-      border: 0;
-      outline: 0;
+      border: none;
+      outline: none;
       border-radius: 14px;
       background: #151a28;
       color: white;
@@ -70,7 +71,7 @@
       width: 55px;
       height: 55px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #312e81, #111827);
+      background: #252b45;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -104,17 +105,16 @@
       font-size: 17px;
     }
 
-    .empty {
+    .message {
       text-align: center;
-      color: #777f92;
+      color: #9ca3af;
       padding: 40px 10px;
+      line-height: 1.6;
     }
 
     .error {
-      text-align: center;
-      color: #ff8a8a;
-      padding: 30px 10px;
-      font-size: 14px;
+      color: #ff8585;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -127,8 +127,8 @@
   </div>
 
   <input
-    class="search"
     id="search"
+    class="search"
     type="text"
     placeholder="🔍 Search songs..."
   >
@@ -136,91 +136,127 @@
   <div class="section-title">🎵 Songs</div>
 
   <div id="songs">
-    <div class="empty">Loading songs...</div>
+    <div class="message">Loading songs...</div>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
 
-    tg.ready();
-    tg.expand();
+    // Telegram Mini App
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
 
-    const SUPABASE_URL = "https://kalcgkaxdfcuqspnmqtq.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthbGNna2F4ZGZjdXFzcG5tcXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MTMzNTEsImV4cCI6MjEwMzQ4OTM1MX0.O0ZZ46beCfcMlbPH1bOf2rHZImuz_CPsVI2zNKlPBhY";
+    // Supabase
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+    const songsContainer = document.getElementById("songs");
 
     let songs = [];
 
     async function loadSongs() {
-      const container = document.getElementById("songs");
 
-      const { data, error } = await supabaseClient
-  .from("songs")
-  .select("title, artist, url");
+      try {
 
-      if (error) {
-        console.error(error);
-        container.innerHTML = `
-          <div class="error">
-            Unable to load songs.
+        if (
+          SUPABASE_URL === "YOUR_SUPABASE_URL" ||
+          SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY"
+        ) {
+          throw new Error(
+            "Supabase URL or anon key is not connected."
+          );
+        }
+
+        const client = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
+
+        const result = await client
+          .from("songs")
+          .select("title, artist, url");
+
+        if (result.error) {
+          throw new Error(result.error.message);
+        }
+
+        songs = result.data || [];
+
+        displaySongs(songs);
+
+      } catch (error) {
+
+        console.error("Moonify error:", error);
+
+        songsContainer.innerHTML = `
+          <div class="message error">
+            ❌ ${escapeHtml(error.message)}
           </div>
         `;
-        return;
       }
-
-      songs = data || [];
-      showSongs(songs);
     }
 
-    function showSongs(list) {
-      const container = document.getElementById("songs");
+    function displaySongs(list) {
 
       if (!list.length) {
-        container.innerHTML = `
-          <div class="empty">
+        songsContainer.innerHTML = `
+          <div class="message">
             No songs published yet.
           </div>
         `;
         return;
       }
 
-      container.innerHTML = list.map(song => `
-        <div class="song">
-          <div class="cover">🎵</div>
+      songsContainer.innerHTML = list.map(song => {
 
-          <div class="info">
-            <div class="title">
-              ${escapeHtml(song.title || "Unknown")}
+        const title = escapeHtml(song.title || "Unknown");
+        const artist = escapeHtml(song.artist || "Unknown Artist");
+        const url = encodeURIComponent(song.url || "");
+
+        return `
+          <div class="song">
+
+            <div class="cover">
+              🎵
             </div>
 
-            <div class="artist">
-              ${escapeHtml(song.artist || "Unknown artist")}
+            <div class="info">
+              <div class="title">
+                ${title}
+              </div>
+
+              <div class="artist">
+                ${artist}
+              </div>
             </div>
+
+            <button
+              class="play"
+              onclick="playSong('${url}')"
+            >
+              ▶
+            </button>
+
           </div>
+        `;
 
-          <button
-            class="play"
-            onclick="openSong('${encodeURIComponent(song.url || "")}')"
-          >
-            ▶
-          </button>
-        </div>
-      `).join("");
+      }).join("");
     }
 
-    function openSong(encodedUrl) {
+    function playSong(encodedUrl) {
+
       const url = decodeURIComponent(encodedUrl);
 
-      if (url) {
-        window.open(url, "_blank");
+      if (!url) {
+        return;
       }
+
+      window.open(url, "_blank");
     }
 
     function escapeHtml(text) {
+
       return String(text)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -229,18 +265,28 @@
         .replaceAll("'", "&#039;");
     }
 
-    document.getElementById("search").addEventListener("input", function () {
-      const query = this.value.toLowerCase();
+    document
+      .getElementById("search")
+      .addEventListener("input", function () {
 
-      const filtered = songs.filter(song =>
-        (song.title || "").toLowerCase().includes(query) ||
-        (song.artist || "").toLowerCase().includes(query)
-      );
+        const query = this.value.toLowerCase();
 
-      showSongs(filtered);
-    });
+        const filtered = songs.filter(song => {
+
+          const title = (song.title || "").toLowerCase();
+          const artist = (song.artist || "").toLowerCase();
+
+          return (
+            title.includes(query) ||
+            artist.includes(query)
+          );
+        });
+
+        displaySongs(filtered);
+      });
 
     loadSongs();
+
   </script>
 
 </body>
