@@ -159,9 +159,8 @@
       const container = document.getElementById("songs");
 
       const { data, error } = await supabaseClient
-        .from("songs")
-        .select("title, artist, url")
-        .order("id", { ascending: false });
+  .from("songs")
+  .select("title, artist, url");
 
       if (error) {
         console.error(error);
