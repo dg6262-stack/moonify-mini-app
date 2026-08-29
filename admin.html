@@ -480,7 +480,7 @@ async function uploadMP3(file) {
   const { error } =
     await supabaseClient
       .storage
-      .from("Songs")
+      .from("songs")
       .upload(
         filePath,
         file,
