@@ -55,6 +55,10 @@
       outline: none;
     }
 
+    input[type="file"] {
+      padding: 12px;
+    }
+
     button {
       width: 100%;
       padding: 14px;
@@ -79,6 +83,11 @@
     }
 
     .logout {
+      background: #252b3a;
+      color: white;
+    }
+
+    .cancel {
       background: #252b3a;
       color: white;
     }
@@ -108,6 +117,13 @@
       margin-top: 5px;
     }
 
+    .song-url {
+      color: #667085;
+      font-size: 11px;
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
     .actions {
       display: flex;
       gap: 8px;
@@ -115,6 +131,20 @@
 
     .actions button {
       margin-top: 10px;
+    }
+
+    .file-label {
+      display: block;
+      color: #9ca3af;
+      font-size: 13px;
+      margin-top: 16px;
+    }
+
+    .hint {
+      color: #737b8f;
+      font-size: 12px;
+      margin-top: 7px;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -129,11 +159,21 @@
   <!-- LOGIN -->
   <div class="card" id="loginPanel">
 
-    <input id="email" type="email" placeholder="Admin Email">
+    <input
+      id="email"
+      type="email"
+      placeholder="Admin Email"
+    >
 
-    <input id="password" type="password" placeholder="Password">
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+    >
 
-    <button onclick="login()">🔐 Login</button>
+    <button onclick="login()">
+      🔐 Login
+    </button>
 
     <div id="loginStatus"></div>
 
@@ -145,23 +185,63 @@
 
     <div class="card">
 
-      <input id="title" type="text" placeholder="Song Title">
+      <input
+        id="title"
+        type="text"
+        placeholder="Song Title"
+      >
 
-      <input id="artist" type="text" placeholder="Artist">
+      <input
+        id="artist"
+        type="text"
+        placeholder="Artist"
+      >
 
-      <input id="url" type="url" placeholder="YouTube URL">
+      <label class="file-label">
+        🎵 Select MP3 File
+      </label>
 
-      <button id="publishButton" onclick="publishSong()">
+      <input
+        id="audioFile"
+        type="file"
+        accept="audio/mpeg,audio/mp3,.mp3"
+      >
+
+      <div class="hint">
+        MP3 file select karo. Upload hone ke baad Moonify mein
+        built-in audio player se play hoga.
+      </div>
+
+      <input
+        id="url"
+        type="url"
+        placeholder="Direct MP3 URL (optional)"
+      >
+
+      <div class="hint">
+        Agar MP3 file upload nahi karni, to direct MP3 URL de sakte ho.
+      </div>
+
+      <button
+        id="publishButton"
+        onclick="handlePublishOrUpdate()"
+      >
         🚀 Publish Song
       </button>
 
-      <button id="cancelButton"
-              onclick="cancelEdit()"
-              style="display:none;">
+      <button
+        id="cancelButton"
+        class="cancel"
+        onclick="cancelEdit()"
+        style="display:none;"
+      >
         Cancel Edit
       </button>
 
-      <button class="logout" onclick="logout()">
+      <button
+        class="logout"
+        onclick="logout()"
+      >
         Logout
       </button>
 
@@ -169,7 +249,10 @@
 
     </div>
 
-    <h2 style="margin-top:30px;">Published Songs</h2>
+
+    <h2 style="margin-top:30px;">
+      Published Songs
+    </h2>
 
     <div id="songList"></div>
 
@@ -180,30 +263,46 @@
 
 <script>
 
-let supabaseClient;
+let supabaseClient = null;
 let editingId = null;
 
+
+/* =========================
+   INITIALIZE
+========================= */
 
 async function init() {
 
   try {
 
-    const response = await fetch("/api/config");
+    const response =
+      await fetch("/api/config");
 
     if (!response.ok) {
-      throw new Error("Could not load configuration");
+      throw new Error(
+        "Could not load configuration."
+      );
     }
 
-    const config = await response.json();
+    const config =
+      await response.json();
 
-    supabaseClient = window.supabase.createClient(
-      config.url,
-      config.key
-    );
+    if (!config.url || !config.key) {
+      throw new Error(
+        "Supabase configuration is missing."
+      );
+    }
+
+    supabaseClient =
+      window.supabase.createClient(
+        config.url,
+        config.key
+      );
 
     const {
       data: { session }
-    } = await supabaseClient.auth.getSession();
+    } =
+      await supabaseClient.auth.getSession();
 
     if (session) {
       showAdminPanel();
@@ -211,7 +310,9 @@ async function init() {
 
   } catch (error) {
 
-    document.getElementById("loginStatus").textContent =
+    document.getElementById(
+      "loginStatus"
+    ).textContent =
       "❌ " + error.message;
 
   }
@@ -219,16 +320,26 @@ async function init() {
 }
 
 
+/* =========================
+   LOGIN
+========================= */
+
 async function login() {
 
   const email =
-    document.getElementById("email").value.trim();
+    document.getElementById(
+      "email"
+    ).value.trim();
 
   const password =
-    document.getElementById("password").value;
+    document.getElementById(
+      "password"
+    ).value;
 
   const status =
-    document.getElementById("loginStatus");
+    document.getElementById(
+      "loginStatus"
+    );
 
   if (!email || !password) {
 
@@ -236,10 +347,10 @@ async function login() {
       "⚠️ Email and password required.";
 
     return;
-
   }
 
-  status.textContent = "Logging in...";
+  status.textContent =
+    "Logging in...";
 
   const { error } =
     await supabaseClient.auth.signInWithPassword({
@@ -253,15 +364,17 @@ async function login() {
       "❌ " + error.message;
 
     return;
-
   }
 
   status.textContent = "";
 
   showAdminPanel();
-
 }
 
+
+/* =========================
+   LOGOUT
+========================= */
 
 async function logout() {
 
@@ -269,172 +382,428 @@ async function logout() {
 
   editingId = null;
 
-  document.getElementById("adminPanel").style.display = "none";
-  document.getElementById("loginPanel").style.display = "block";
+  document.getElementById(
+    "adminPanel"
+  ).style.display = "none";
 
+  document.getElementById(
+    "loginPanel"
+  ).style.display = "block";
+
+  clearForm();
 }
 
+
+/* =========================
+   SHOW ADMIN
+========================= */
 
 function showAdminPanel() {
 
-  document.getElementById("loginPanel").style.display = "none";
-  document.getElementById("adminPanel").style.display = "block";
+  document.getElementById(
+    "loginPanel"
+  ).style.display = "none";
+
+  document.getElementById(
+    "adminPanel"
+  ).style.display = "block";
 
   loadSongs();
-
 }
 
+
+/* =========================
+   PUBLISH OR UPDATE
+========================= */
+
+async function handlePublishOrUpdate() {
+
+  if (editingId !== null) {
+
+    await updateSong();
+
+  } else {
+
+    await publishSong();
+
+  }
+}
+
+
+/* =========================
+   UPLOAD MP3
+========================= */
+
+async function uploadMP3(file) {
+
+  if (!file) {
+    return null;
+  }
+
+  if (
+    file.type !== "audio/mpeg" &&
+    !file.name.toLowerCase().endsWith(".mp3")
+  ) {
+
+    throw new Error(
+      "Please select an MP3 file."
+    );
+  }
+
+  const maxSize =
+    100 * 1024 * 1024;
+
+  if (file.size > maxSize) {
+
+    throw new Error(
+      "MP3 file must be smaller than 100 MB."
+    );
+  }
+
+  const safeName =
+    file.name
+      .replace(/[^a-zA-Z0-9._-]/g, "_");
+
+  const uniqueName =
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .substring(2, 8) +
+    "_" +
+    safeName;
+
+  const filePath =
+    "uploads/" + uniqueName;
+
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("songs")
+      .upload(
+        filePath,
+        file,
+        {
+          contentType: "audio/mpeg",
+          upsert: false
+        }
+      );
+
+  if (error) {
+    throw new Error(
+      "MP3 upload failed: " +
+      error.message
+    );
+  }
+
+
+  const {
+    data
+  } =
+    supabaseClient
+      .storage
+      .from("songs")
+      .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
+
+
+/* =========================
+   PUBLISH SONG
+========================= */
 
 async function publishSong() {
 
   const title =
-    document.getElementById("title").value.trim();
+    document.getElementById(
+      "title"
+    ).value.trim();
 
   const artist =
-    document.getElementById("artist").value.trim();
+    document.getElementById(
+      "artist"
+    ).value.trim();
 
-  const url =
-    document.getElementById("url").value.trim();
+  const file =
+    document.getElementById(
+      "audioFile"
+    ).files[0];
+
+  const directUrl =
+    document.getElementById(
+      "url"
+    ).value.trim();
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
-  if (!title || !artist || !url) {
+
+  if (!title || !artist) {
 
     status.textContent =
-      "⚠️ Please fill all fields.";
+      "⚠️ Title and Artist are required.";
 
     return;
-
   }
 
-  status.textContent = "Publishing...";
 
-  const { error } =
-    await supabaseClient
-      .from("songs")
-      .insert({
-        title,
-        artist,
-        url
-      });
+  if (!file && !directUrl) {
 
-  if (error) {
+    status.textContent =
+      "⚠️ Select an MP3 file or enter a direct MP3 URL.";
+
+    return;
+  }
+
+
+  try {
+
+    status.textContent =
+      "Uploading song...";
+
+    let songUrl =
+      directUrl;
+
+
+    if (file) {
+
+      songUrl =
+        await uploadMP3(file);
+
+    }
+
+
+    status.textContent =
+      "Publishing...";
+
+
+    const { error } =
+      await supabaseClient
+        .from("songs")
+        .insert({
+          title: title,
+          artist: artist,
+          url: songUrl
+        });
+
+
+    if (error) {
+
+      throw new Error(
+        error.message
+      );
+    }
+
+
+    status.textContent =
+      "✅ Song published successfully!";
+
+    clearForm();
+
+    await loadSongs();
+
+  } catch (error) {
 
     status.textContent =
       "❌ " + error.message;
-
-    return;
-
   }
-
-  status.textContent =
-    "✅ Song published successfully!";
-
-  clearForm();
-
-  loadSongs();
-
 }
 
 
+/* =========================
+   START EDIT
+========================= */
+
 function startEdit(song) {
 
-  editingId = song.id;
+  editingId =
+    song.id;
 
-  document.getElementById("title").value =
+  document.getElementById(
+    "title"
+  ).value =
     song.title || "";
 
-  document.getElementById("artist").value =
+  document.getElementById(
+    "artist"
+  ).value =
     song.artist || "";
 
-  document.getElementById("url").value =
+  document.getElementById(
+    "url"
+  ).value =
     song.url || "";
 
-  document.getElementById("publishButton").textContent =
+  document.getElementById(
+    "audioFile"
+  ).value = "";
+
+
+  document.getElementById(
+    "publishButton"
+  ).textContent =
     "💾 Update Song";
 
-  document.getElementById("cancelButton").style.display =
+
+  document.getElementById(
+    "cancelButton"
+  ).style.display =
     "block";
 
-  document.getElementById("status").textContent =
-    "Editing: " + song.title;
+
+  document.getElementById(
+    "status"
+  ).textContent =
+    "Editing: " +
+    (song.title || "Song");
+
 
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
-
 }
 
+
+/* =========================
+   UPDATE SONG
+========================= */
 
 async function updateSong() {
 
   const title =
-    document.getElementById("title").value.trim();
+    document.getElementById(
+      "title"
+    ).value.trim();
 
   const artist =
-    document.getElementById("artist").value.trim();
+    document.getElementById(
+      "artist"
+    ).value.trim();
 
-  const url =
-    document.getElementById("url").value.trim();
+  const file =
+    document.getElementById(
+      "audioFile"
+    ).files[0];
+
+  const currentUrl =
+    document.getElementById(
+      "url"
+    ).value.trim();
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
-  if (!title || !artist || !url) {
+
+  if (!title || !artist) {
 
     status.textContent =
-      "⚠️ Please fill all fields.";
+      "⚠️ Title and Artist are required.";
 
     return;
-
   }
 
-  status.textContent = "Updating...";
 
-  const { error } =
-    await supabaseClient
-      .from("songs")
-      .update({
-        title,
-        artist,
-        url
-      })
-      .eq("id", editingId);
+  try {
 
-  if (error) {
+    status.textContent =
+      "Updating...";
+
+
+    let newUrl =
+      currentUrl;
+
+
+    if (file) {
+
+      status.textContent =
+        "Uploading new MP3...";
+
+      newUrl =
+        await uploadMP3(file);
+
+    }
+
+
+    if (!newUrl) {
+
+      throw new Error(
+        "MP3 URL is required."
+      );
+    }
+
+
+    const { error } =
+      await supabaseClient
+        .from("songs")
+        .update({
+          title: title,
+          artist: artist,
+          url: newUrl
+        })
+        .eq("id", editingId);
+
+
+    if (error) {
+
+      throw new Error(
+        error.message
+      );
+    }
+
+
+    status.textContent =
+      "✅ Song updated successfully!";
+
+    editingId = null;
+
+    clearForm();
+
+    await loadSongs();
+
+  } catch (error) {
 
     status.textContent =
       "❌ " + error.message;
-
-    return;
-
   }
-
-  status.textContent =
-    "✅ Song updated successfully!";
-
-  editingId = null;
-
-  clearForm();
-
-  loadSongs();
-
 }
 
 
-async function deleteSong(id, title) {
+/* =========================
+   DELETE SONG
+========================= */
+
+async function deleteSong(
+  id,
+  title
+) {
 
   const confirmed =
-    confirm('Delete "' + title + '"?');
+    confirm(
+      'Delete "' +
+      title +
+      '"?'
+    );
 
-  if (!confirmed) return;
+  if (!confirmed) {
+    return;
+  }
+
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
-  status.textContent = "Deleting...";
+  status.textContent =
+    "Deleting...";
+
 
   const { error } =
     await supabaseClient
@@ -442,26 +811,32 @@ async function deleteSong(id, title) {
       .delete()
       .eq("id", id);
 
+
   if (error) {
 
     status.textContent =
       "❌ " + error.message;
 
     return;
-
   }
+
 
   status.textContent =
     "✅ Song deleted successfully!";
+
 
   if (editingId === id) {
     cancelEdit();
   }
 
-  loadSongs();
 
+  await loadSongs();
 }
 
+
+/* =========================
+   CANCEL EDIT
+========================= */
 
 function cancelEdit() {
 
@@ -469,47 +844,86 @@ function cancelEdit() {
 
   clearForm();
 
-  document.getElementById("status").textContent = "";
-
+  document.getElementById(
+    "status"
+  ).textContent = "";
 }
 
+
+/* =========================
+   CLEAR FORM
+========================= */
 
 function clearForm() {
 
-  document.getElementById("title").value = "";
-  document.getElementById("artist").value = "";
-  document.getElementById("url").value = "";
+  document.getElementById(
+    "title"
+  ).value = "";
 
-  document.getElementById("publishButton").textContent =
+  document.getElementById(
+    "artist"
+  ).value = "";
+
+  document.getElementById(
+    "url"
+  ).value = "";
+
+  document.getElementById(
+    "audioFile"
+  ).value = "";
+
+
+  document.getElementById(
+    "publishButton"
+  ).textContent =
     "🚀 Publish Song";
 
-  document.getElementById("cancelButton").style.display =
-    "none";
 
+  document.getElementById(
+    "cancelButton"
+  ).style.display =
+    "none";
 }
 
+
+/* =========================
+   LOAD SONGS
+========================= */
 
 async function loadSongs() {
 
   const list =
-    document.getElementById("songList");
+    document.getElementById(
+      "songList"
+    );
+
 
   const { data, error } =
     await supabaseClient
       .from("songs")
-      .select("id,title,artist,url")
-      .order("id", { ascending: false });
+      .select(
+        "id,title,artist,url"
+      )
+      .order(
+        "id",
+        {
+          ascending: false
+        }
+      );
+
 
   if (error) {
 
     list.innerHTML =
       "<p style='color:#ff8585;'>❌ " +
-      error.message +
+      escapeHtml(
+        error.message
+      ) +
       "</p>";
 
     return;
-
   }
+
 
   if (!data || data.length === 0) {
 
@@ -517,72 +931,98 @@ async function loadSongs() {
       "<p style='color:#9ca3af;'>No songs yet.</p>";
 
     return;
-
   }
 
-  list.innerHTML = data.map(song => `
 
-    <div class="song">
+  list.innerHTML =
+    data.map(song => `
 
-      <strong>${escapeHtml(song.title)}</strong>
+      <div class="song">
 
-      <div class="artist">
-        ${escapeHtml(song.artist || "")}
+        <strong>
+          ${escapeHtml(
+            song.title || "Unknown"
+          )}
+        </strong>
+
+        <div class="artist">
+          ${escapeHtml(
+            song.artist || "Unknown Artist"
+          )}
+        </div>
+
+        <div class="song-url">
+          ${escapeHtml(
+            song.url || ""
+          )}
+        </div>
+
+        <div class="actions">
+
+          <button
+            class="edit"
+            onclick='startEdit(${JSON.stringify(song)})'
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="delete"
+            onclick='deleteSong(
+              ${song.id},
+              ${JSON.stringify(
+                song.title || "Song"
+              )}
+            )'
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
       </div>
 
-      <div class="actions">
-
-        <button class="edit"
-          onclick='startEdit(${JSON.stringify(song)})'>
-          ✏️ Edit
-        </button>
-
-        <button class="delete"
-          onclick='deleteSong(${song.id}, ${JSON.stringify(song.title)})'>
-          🗑️ Delete
-        </button>
-
-      </div>
-
-    </div>
-
-  `).join("");
-
+    `).join("");
 }
 
+
+/* =========================
+   ESCAPE HTML
+========================= */
 
 function escapeHtml(text) {
 
   return String(text)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 }
 
 
-/* Decide whether button should Publish or Update */
-
-document.addEventListener("click", function(event) {
-
-  if (
-    event.target.id === "publishButton" &&
-    editingId !== null
-  ) {
-
-    event.preventDefault();
-    updateSong();
-
-  }
-
-});
-
+/* =========================
+   START
+========================= */
 
 init();
 
 </script>
 
 </body>
-  </html>
+</html>
