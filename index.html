@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +7,7 @@
   <title>Moonify</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -86,6 +88,9 @@
     .title {
       font-size: 15px;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .artist {
@@ -102,6 +107,8 @@
       background: white;
       color: black;
       font-size: 17px;
+      flex-shrink: 0;
+      cursor: pointer;
     }
 
     .message {
@@ -115,7 +122,71 @@
       color: #ff8585;
       word-break: break-word;
     }
+
+    /* PLAYER */
+
+    .player {
+      display: none;
+      background: #121725;
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 22px;
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .player-info {
+      min-width: 0;
+      padding-right: 10px;
+    }
+
+    .player-title {
+      font-size: 15px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-artist {
+      color: #8f96a8;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .close-player {
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 50%;
+      background: #252b45;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 12px;
+      background: black;
+    }
+
+    .video-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   </style>
+
 </head>
 
 <body>
@@ -125,20 +196,63 @@
     <div class="subtitle">Your music space</div>
   </div>
 
-  <input
-    id="search"
-    class="search"
-    type="text"
-    placeholder="🔍 Search songs..."
+<input
+id="search"
+class="search"
+type="text"
+placeholder="🔍 Search songs..."
+
+>
+
+  <!-- PLAYER -->
+
+  <div id="player" class="player">
+
+```
+<div class="player-header">
+
+  <div class="player-info">
+    <div id="playerTitle" class="player-title">
+      Now Playing
+    </div>
+
+    <div id="playerArtist" class="player-artist">
+      Moonify
+    </div>
+  </div>
+
+  <button
+    class="close-player"
+    onclick="closePlayer()"
   >
+    ✕
+  </button>
+
+</div>
+
+<div class="video-wrapper">
+  <iframe
+    id="youtubePlayer"
+    src=""
+    title="Moonify Player"
+    allow="autoplay; encrypted-media; picture-in-picture"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+  </div>
 
   <div class="section-title">🎵 Songs</div>
 
   <div id="songs">
-    <div class="message">Loading songs...</div>
+    <div class="message">
+      Loading songs...
+    </div>
   </div>
 
   <script>
+
     const tg = window.Telegram.WebApp;
 
     tg.ready();
@@ -146,33 +260,42 @@
 
     let songs = [];
 
+
     async function loadSongs() {
-      const container = document.getElementById("songs");
+
+      const container =
+        document.getElementById("songs");
 
       try {
-        // Get Supabase settings from our Vercel API
-        const configResponse = await fetch("/api/config");
+
+        const configResponse =
+          await fetch("/api/config");
 
         if (!configResponse.ok) {
-          throw new Error("Could not load Supabase configuration.");
+          throw new Error(
+            "Could not load Supabase configuration."
+          );
         }
 
-        const config = await configResponse.json();
+        const config =
+          await configResponse.json();
 
         if (!config.url || !config.key) {
-          throw new Error("Supabase configuration is missing.");
+          throw new Error(
+            "Supabase configuration is missing."
+          );
         }
 
-        // Create Supabase client
-        const supabaseClient = window.supabase.createClient(
-          config.url,
-          config.key
-        );
+        const supabaseClient =
+          window.supabase.createClient(
+            config.url,
+            config.key
+          );
 
-        // Load songs
-        const { data, error } = await supabaseClient
-          .from("songs")
-          .select("title, artist, url");
+        const { data, error } =
+          await supabaseClient
+            .from("songs")
+            .select("title, artist, url");
 
         if (error) {
           throw new Error(error.message);
@@ -183,7 +306,11 @@
         displaySongs(songs);
 
       } catch (error) {
-        console.error("Moonify error:", error);
+
+        console.error(
+          "Moonify error:",
+          error
+        );
 
         container.innerHTML = `
           <div class="message error">
@@ -193,77 +320,261 @@
       }
     }
 
+
     function displaySongs(list) {
-      const container = document.getElementById("songs");
+
+      const container =
+        document.getElementById("songs");
 
       if (!list.length) {
+
         container.innerHTML = `
           <div class="message">
             No songs published yet.
           </div>
         `;
+
         return;
       }
 
-      container.innerHTML = list.map(song => `
-        <div class="song">
+      container.innerHTML =
+        list.map((song, index) => `
 
-          <div class="cover">🎵</div>
+          <div class="song">
 
-          <div class="info">
-            <div class="title">
-              ${escapeHtml(song.title || "Unknown")}
+            <div class="cover">
+              🎵
             </div>
 
-            <div class="artist">
-              ${escapeHtml(song.artist || "Unknown Artist")}
+            <div class="info">
+
+              <div class="title">
+                ${escapeHtml(
+                  song.title || "Unknown"
+                )}
+              </div>
+
+              <div class="artist">
+                ${escapeHtml(
+                  song.artist || "Unknown Artist"
+                )}
+              </div>
+
             </div>
+
+            <button
+              class="play"
+              onclick="playSong(${index}, '${encodeURIComponent(song.url || "")}')"
+            >
+              ▶
+            </button>
+
           </div>
 
-          <button
-            class="play"
-            onclick="playSong('${encodeURIComponent(song.url || "")}')"
-          >
-            ▶
-          </button>
-
-        </div>
-      `).join("");
+        `).join("");
     }
 
-    function playSong(encodedUrl) {
-      const url = decodeURIComponent(encodedUrl);
 
-      if (url) {
-        window.open(url, "_blank");
+    function playSong(index, encodedUrl) {
+
+      const url =
+        decodeURIComponent(encodedUrl);
+
+      if (!url) {
+        return;
       }
+
+      const videoId =
+        getYouTubeVideoId(url);
+
+      const song =
+        songs.find((item, i) => i === index);
+
+      if (!videoId) {
+
+        window.open(
+          url,
+          "_blank",
+          "noopener,noreferrer"
+        );
+
+        return;
+      }
+
+      const player =
+        document.getElementById("player");
+
+      const iframe =
+        document.getElementById("youtubePlayer");
+
+      const title =
+        document.getElementById("playerTitle");
+
+      const artist =
+        document.getElementById("playerArtist");
+
+      title.textContent =
+        song?.title || "Now Playing";
+
+      artist.textContent =
+        song?.artist || "Moonify";
+
+      iframe.src =
+        "https://www.youtube-nocookie.com/embed/" +
+        videoId +
+        "?autoplay=1&rel=0";
+
+      player.style.display = "block";
+
+      player.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
     }
+
+
+    function closePlayer() {
+
+      const player =
+        document.getElementById("player");
+
+      const iframe =
+        document.getElementById("youtubePlayer");
+
+      iframe.src = "";
+
+      player.style.display = "none";
+    }
+
+
+    function getYouTubeVideoId(url) {
+
+      try {
+
+        const parsed =
+          new URL(url);
+
+        const hostname =
+          parsed.hostname.toLowerCase();
+
+        if (
+          hostname === "youtu.be"
+        ) {
+
+          return parsed.pathname
+            .replace("/", "")
+            .split("?")[0];
+
+        }
+
+        if (
+          hostname.includes("youtube.com")
+        ) {
+
+          if (
+            parsed.pathname === "/watch"
+          ) {
+
+            return parsed.searchParams.get("v");
+
+          }
+
+          if (
+            parsed.pathname.startsWith("/shorts/")
+          ) {
+
+            return parsed.pathname
+              .split("/shorts/")[1]
+              .split("/")[0];
+
+          }
+
+          if (
+            parsed.pathname.startsWith("/embed/")
+          ) {
+
+            return parsed.pathname
+              .split("/embed/")[1]
+              .split("/")[0];
+
+          }
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Invalid URL:",
+          error
+        );
+
+      }
+
+      return null;
+    }
+
 
     function escapeHtml(text) {
+
       return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
     }
+
 
     document
       .getElementById("search")
-      .addEventListener("input", function () {
+      .addEventListener(
+        "input",
+        function () {
 
-        const query = this.value.toLowerCase();
+          const query =
+            this.value
+              .toLowerCase()
+              .trim();
 
-        const filtered = songs.filter(song =>
-          (song.title || "").toLowerCase().includes(query) ||
-          (song.artist || "").toLowerCase().includes(query)
-        );
+          const filtered =
+            songs.filter(song =>
 
-        displaySongs(filtered);
-      });
+              (song.title || "")
+                .toLowerCase()
+                .includes(query)
+
+              ||
+
+              (song.artist || "")
+                .toLowerCase()
+                .includes(query)
+
+            );
+
+          displaySongs(filtered);
+
+        }
+      );
+
 
     loadSongs();
+
   </script>
 
 </body>
-</html>
+  </html>
+  
