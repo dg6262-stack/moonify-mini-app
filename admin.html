@@ -68,20 +68,31 @@
       cursor: pointer;
     }
 
+    .edit {
+      background: #334155;
+      color: white;
+    }
+
+    .delete {
+      background: #7f1d1d;
+      color: white;
+    }
+
     .logout {
       background: #252b3a;
       color: white;
     }
 
+    #adminPanel {
+      display: none;
+    }
+
+    #loginStatus,
     #status {
       text-align: center;
       margin-top: 15px;
       color: #9ca3af;
       min-height: 20px;
-    }
-
-    #adminPanel {
-      display: none;
     }
 
     .song {
@@ -96,6 +107,15 @@
       font-size: 13px;
       margin-top: 5px;
     }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .actions button {
+      margin-top: 10px;
+    }
   </style>
 </head>
 
@@ -104,24 +124,14 @@
 <div class="container">
 
   <h1>🌙 Moonify Admin</h1>
-  <div class="subtitle">Admin Login</div>
+  <div class="subtitle">Admin Panel</div>
 
   <!-- LOGIN -->
   <div class="card" id="loginPanel">
 
-    <input
-      id="email"
-      type="email"
-      placeholder="Admin Email"
-      autocomplete="email"
-    >
+    <input id="email" type="email" placeholder="Admin Email">
 
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
+    <input id="password" type="password" placeholder="Password">
 
     <button onclick="login()">🔐 Login</button>
 
@@ -135,27 +145,25 @@
 
     <div class="card">
 
-      <input
-        id="title"
-        type="text"
-        placeholder="Song Title"
-      >
+      <input id="title" type="text" placeholder="Song Title">
 
-      <input
-        id="artist"
-        type="text"
-        placeholder="Artist"
-      >
+      <input id="artist" type="text" placeholder="Artist">
 
-      <input
-        id="url"
-        type="url"
-        placeholder="YouTube URL"
-      >
+      <input id="url" type="url" placeholder="YouTube URL">
 
-      <button onclick="publishSong()">🚀 Publish Song</button>
+      <button id="publishButton" onclick="publishSong()">
+        🚀 Publish Song
+      </button>
 
-      <button class="logout" onclick="logout()">Logout</button>
+      <button id="cancelButton"
+              onclick="cancelEdit()"
+              style="display:none;">
+        Cancel Edit
+      </button>
+
+      <button class="logout" onclick="logout()">
+        Logout
+      </button>
 
       <div id="status"></div>
 
@@ -173,6 +181,7 @@
 <script>
 
 let supabaseClient;
+let editingId = null;
 
 
 async function init() {
@@ -186,10 +195,6 @@ async function init() {
     }
 
     const config = await response.json();
-
-    if (!config.url || !config.key) {
-      throw new Error("Supabase configuration missing");
-    }
 
     supabaseClient = window.supabase.createClient(
       config.url,
@@ -262,6 +267,8 @@ async function logout() {
 
   await supabaseClient.auth.signOut();
 
+  editingId = null;
+
   document.getElementById("adminPanel").style.display = "none";
   document.getElementById("loginPanel").style.display = "block";
 
@@ -306,11 +313,11 @@ async function publishSong() {
   const { error } =
     await supabaseClient
       .from("songs")
-      .insert([{
-        title: title,
-        artist: artist,
-        url: url
-      }]);
+      .insert({
+        title,
+        artist,
+        url
+      });
 
   if (error) {
 
@@ -324,11 +331,160 @@ async function publishSong() {
   status.textContent =
     "✅ Song published successfully!";
 
+  clearForm();
+
+  loadSongs();
+
+}
+
+
+function startEdit(song) {
+
+  editingId = song.id;
+
+  document.getElementById("title").value =
+    song.title || "";
+
+  document.getElementById("artist").value =
+    song.artist || "";
+
+  document.getElementById("url").value =
+    song.url || "";
+
+  document.getElementById("publishButton").textContent =
+    "💾 Update Song";
+
+  document.getElementById("cancelButton").style.display =
+    "block";
+
+  document.getElementById("status").textContent =
+    "Editing: " + song.title;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+async function updateSong() {
+
+  const title =
+    document.getElementById("title").value.trim();
+
+  const artist =
+    document.getElementById("artist").value.trim();
+
+  const url =
+    document.getElementById("url").value.trim();
+
+  const status =
+    document.getElementById("status");
+
+  if (!title || !artist || !url) {
+
+    status.textContent =
+      "⚠️ Please fill all fields.";
+
+    return;
+
+  }
+
+  status.textContent = "Updating...";
+
+  const { error } =
+    await supabaseClient
+      .from("songs")
+      .update({
+        title,
+        artist,
+        url
+      })
+      .eq("id", editingId);
+
+  if (error) {
+
+    status.textContent =
+      "❌ " + error.message;
+
+    return;
+
+  }
+
+  status.textContent =
+    "✅ Song updated successfully!";
+
+  editingId = null;
+
+  clearForm();
+
+  loadSongs();
+
+}
+
+
+async function deleteSong(id, title) {
+
+  const confirmed =
+    confirm('Delete "' + title + '"?');
+
+  if (!confirmed) return;
+
+  const status =
+    document.getElementById("status");
+
+  status.textContent = "Deleting...";
+
+  const { error } =
+    await supabaseClient
+      .from("songs")
+      .delete()
+      .eq("id", id);
+
+  if (error) {
+
+    status.textContent =
+      "❌ " + error.message;
+
+    return;
+
+  }
+
+  status.textContent =
+    "✅ Song deleted successfully!";
+
+  if (editingId === id) {
+    cancelEdit();
+  }
+
+  loadSongs();
+
+}
+
+
+function cancelEdit() {
+
+  editingId = null;
+
+  clearForm();
+
+  document.getElementById("status").textContent = "";
+
+}
+
+
+function clearForm() {
+
   document.getElementById("title").value = "";
   document.getElementById("artist").value = "";
   document.getElementById("url").value = "";
 
-  loadSongs();
+  document.getElementById("publishButton").textContent =
+    "🚀 Publish Song";
+
+  document.getElementById("cancelButton").style.display =
+    "none";
 
 }
 
@@ -365,10 +521,31 @@ async function loadSongs() {
   }
 
   list.innerHTML = data.map(song => `
+
     <div class="song">
+
       <strong>${escapeHtml(song.title)}</strong>
-      <div class="artist">${escapeHtml(song.artist || "")}</div>
+
+      <div class="artist">
+        ${escapeHtml(song.artist || "")}
+      </div>
+
+      <div class="actions">
+
+        <button class="edit"
+          onclick='startEdit(${JSON.stringify(song)})'>
+          ✏️ Edit
+        </button>
+
+        <button class="delete"
+          onclick='deleteSong(${song.id}, ${JSON.stringify(song.title)})'>
+          🗑️ Delete
+        </button>
+
+      </div>
+
     </div>
+
   `).join("");
 
 }
@@ -386,9 +563,26 @@ function escapeHtml(text) {
 }
 
 
+/* Decide whether button should Publish or Update */
+
+document.addEventListener("click", function(event) {
+
+  if (
+    event.target.id === "publishButton" &&
+    editingId !== null
+  ) {
+
+    event.preventDefault();
+    updateSong();
+
+  }
+
+});
+
+
 init();
 
 </script>
 
 </body>
-</html>
+  </html>
