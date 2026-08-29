@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Moonify</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -140,56 +139,53 @@
   </div>
 
   <script>
+    const tg = window.Telegram.WebApp;
 
-    // Telegram Mini App
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand();
-    }
-
-    // Supabase
-    const SUPABASE_URL = "YOUR_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-
-    const songsContainer = document.getElementById("songs");
+    tg.ready();
+    tg.expand();
 
     let songs = [];
 
     async function loadSongs() {
+      const container = document.getElementById("songs");
 
       try {
+        // Get Supabase settings from our Vercel API
+        const configResponse = await fetch("/api/config");
 
-        if (
-          SUPABASE_URL === "YOUR_SUPABASE_URL" ||
-          SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY"
-        ) {
-          throw new Error(
-            "Supabase URL or anon key is not connected."
-          );
+        if (!configResponse.ok) {
+          throw new Error("Could not load Supabase configuration.");
         }
 
-        const client = window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY
+        const config = await configResponse.json();
+
+        if (!config.url || !config.key) {
+          throw new Error("Supabase configuration is missing.");
+        }
+
+        // Create Supabase client
+        const supabaseClient = window.supabase.createClient(
+          config.url,
+          config.key
         );
 
-        const result = await client
+        // Load songs
+        const { data, error } = await supabaseClient
           .from("songs")
           .select("title, artist, url");
 
-        if (result.error) {
-          throw new Error(result.error.message);
+        if (error) {
+          throw new Error(error.message);
         }
 
-        songs = result.data || [];
+        songs = data || [];
 
         displaySongs(songs);
 
       } catch (error) {
-
         console.error("Moonify error:", error);
 
-        songsContainer.innerHTML = `
+        container.innerHTML = `
           <div class="message error">
             ❌ ${escapeHtml(error.message)}
           </div>
@@ -198,9 +194,10 @@
     }
 
     function displaySongs(list) {
+      const container = document.getElementById("songs");
 
       if (!list.length) {
-        songsContainer.innerHTML = `
+        container.innerHTML = `
           <div class="message">
             No songs published yet.
           </div>
@@ -208,55 +205,41 @@
         return;
       }
 
-      songsContainer.innerHTML = list.map(song => {
+      container.innerHTML = list.map(song => `
+        <div class="song">
 
-        const title = escapeHtml(song.title || "Unknown");
-        const artist = escapeHtml(song.artist || "Unknown Artist");
-        const url = encodeURIComponent(song.url || "");
+          <div class="cover">🎵</div>
 
-        return `
-          <div class="song">
-
-            <div class="cover">
-              🎵
+          <div class="info">
+            <div class="title">
+              ${escapeHtml(song.title || "Unknown")}
             </div>
 
-            <div class="info">
-              <div class="title">
-                ${title}
-              </div>
-
-              <div class="artist">
-                ${artist}
-              </div>
+            <div class="artist">
+              ${escapeHtml(song.artist || "Unknown Artist")}
             </div>
-
-            <button
-              class="play"
-              onclick="playSong('${url}')"
-            >
-              ▶
-            </button>
-
           </div>
-        `;
 
-      }).join("");
+          <button
+            class="play"
+            onclick="playSong('${encodeURIComponent(song.url || "")}')"
+          >
+            ▶
+          </button>
+
+        </div>
+      `).join("");
     }
 
     function playSong(encodedUrl) {
-
       const url = decodeURIComponent(encodedUrl);
 
-      if (!url) {
-        return;
+      if (url) {
+        window.open(url, "_blank");
       }
-
-      window.open(url, "_blank");
     }
 
     function escapeHtml(text) {
-
       return String(text)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -271,22 +254,15 @@
 
         const query = this.value.toLowerCase();
 
-        const filtered = songs.filter(song => {
-
-          const title = (song.title || "").toLowerCase();
-          const artist = (song.artist || "").toLowerCase();
-
-          return (
-            title.includes(query) ||
-            artist.includes(query)
-          );
-        });
+        const filtered = songs.filter(song =>
+          (song.title || "").toLowerCase().includes(query) ||
+          (song.artist || "").toLowerCase().includes(query)
+        );
 
         displaySongs(filtered);
       });
 
     loadSongs();
-
   </script>
 
 </body>
