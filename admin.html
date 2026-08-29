@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moonify Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #080b14;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #121725;
+      padding: 20px;
+      border-radius: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 7px;
+      color: #cbd5e1;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #293147;
+      border-radius: 12px;
+      background: #0d111c;
+      color: white;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 12px;
+      background: white;
+      color: black;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 15px;
+      color: #9ca3af;
+      min-height: 20px;
+    }
+
+    .song {
+      background: #121725;
+      padding: 15px;
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+
+    .song-title {
+      font-weight: bold;
+    }
+
+    .song-artist {
+      color: #9ca3af;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🌙 Moonify Admin</h1>
+  <div class="subtitle">Publish your songs</div>
+
+  <div class="card">
+
+    <label>Song Title</label>
+    <input id="title" type="text" placeholder="Enter song title">
+
+    <label>Artist</label>
+    <input id="artist" type="text" placeholder="Enter artist name">
+
+    <label>YouTube URL</label>
+    <input id="url" type="url" placeholder="https://www.youtube.com/...">
+
+    <button onclick="publishSong()">🚀 Publish Song</button>
+
+    <div id="status"></div>
+
+  </div>
+
+  <h2 style="margin-top:30px;">Published Songs</h2>
+
+  <div id="songList"></div>
+
+</div>
+
+<script>
+
+let supabaseClient;
+
+async function init() {
+
+  try {
+
+    const response = await fetch("/api/config");
+
+    if (!response.ok) {
+      throw new Error("Could not load configuration");
+    }
+
+    const config = await response.json();
+
+    if (!config.url || !config.key) {
+      throw new Error("Supabase configuration missing");
+    }
+
+    supabaseClient = window.supabase.createClient(
+      config.url,
+      config.key
+    );
+
+    loadSongs();
+
+  } catch (error) {
+
+    document.getElementById("status").textContent =
+      "❌ " + error.message;
+
+  }
+
+}
+
+async function publishSong() {
+
+  const title = document.getElementById("title").value.trim();
+  const artist = document.getElementById("artist").value.trim();
+  const url = document.getElementById("url").value.trim();
+  const status = document.getElementById("status");
+
+  if (!title || !artist || !url) {
+    status.textContent = "⚠️ Please fill all fields.";
+    return;
+  }
+
+  status.textContent = "Publishing...";
+
+  const { error } = await supabaseClient
+    .from("songs")
+    .insert([
+      {
+        title: title,
+        artist: artist,
+        url: url
+      }
+    ]);
+
+  if (error) {
+
+    status.textContent = "❌ " + error.message;
+    return;
+
+  }
+
+  status.textContent = "✅ Song published successfully!";
+
+  document.getElementById("title").value = "";
+  document.getElementById("artist").value = "";
+  document.getElementById("url").value = "";
+
+  loadSongs();
+
+}
+
+async function loadSongs() {
+
+  const list = document.getElementById("songList");
+
+  const { data, error } = await supabaseClient
+    .from("songs")
+    .select("id,title,artist,url")
+    .order("id", { ascending: false });
+
+  if (error) {
+
+    list.innerHTML =
+      "<p style='color:#ff8585;'>❌ " +
+      error.message +
+      "</p>";
+
+    return;
+
+  }
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      "<p style='color:#9ca3af;margin-top:15px;'>No songs yet.</p>";
+
+    return;
+
+  }
+
+  list.innerHTML = data.map(song => `
+    <div class="song">
+      <div class="song-title">${escapeHtml(song.title)}</div>
+      <div class="song-artist">${escapeHtml(song.artist)}</div>
+    </div>
+  `).join("");
+
+}
+
+function escapeHtml(text) {
+
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+init();
+
+</script>
+
+</body>
+  </html>
