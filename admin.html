@@ -44,15 +44,10 @@
       border-radius: 18px;
     }
 
-    label {
-      display: block;
-      margin: 15px 0 7px;
-      color: #cbd5e1;
-    }
-
     input {
       width: 100%;
       padding: 14px;
+      margin-top: 10px;
       border: 1px solid #293147;
       border-radius: 12px;
       background: #0d111c;
@@ -63,7 +58,7 @@
     button {
       width: 100%;
       padding: 14px;
-      margin-top: 20px;
+      margin-top: 15px;
       border: none;
       border-radius: 12px;
       background: white;
@@ -73,11 +68,20 @@
       cursor: pointer;
     }
 
+    .logout {
+      background: #252b3a;
+      color: white;
+    }
+
     #status {
       text-align: center;
       margin-top: 15px;
       color: #9ca3af;
       min-height: 20px;
+    }
+
+    #adminPanel {
+      display: none;
     }
 
     .song {
@@ -87,14 +91,10 @@
       margin-top: 10px;
     }
 
-    .song-title {
-      font-weight: bold;
-    }
-
-    .song-artist {
+    .artist {
       color: #9ca3af;
       font-size: 13px;
-      margin-top: 4px;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -104,34 +104,76 @@
 <div class="container">
 
   <h1>🌙 Moonify Admin</h1>
-  <div class="subtitle">Publish your songs</div>
+  <div class="subtitle">Admin Login</div>
 
-  <div class="card">
+  <!-- LOGIN -->
+  <div class="card" id="loginPanel">
 
-    <label>Song Title</label>
-    <input id="title" type="text" placeholder="Enter song title">
+    <input
+      id="email"
+      type="email"
+      placeholder="Admin Email"
+      autocomplete="email"
+    >
 
-    <label>Artist</label>
-    <input id="artist" type="text" placeholder="Enter artist name">
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
 
-    <label>YouTube URL</label>
-    <input id="url" type="url" placeholder="https://www.youtube.com/...">
+    <button onclick="login()">🔐 Login</button>
 
-    <button onclick="publishSong()">🚀 Publish Song</button>
-
-    <div id="status"></div>
+    <div id="loginStatus"></div>
 
   </div>
 
-  <h2 style="margin-top:30px;">Published Songs</h2>
 
-  <div id="songList"></div>
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+
+    <div class="card">
+
+      <input
+        id="title"
+        type="text"
+        placeholder="Song Title"
+      >
+
+      <input
+        id="artist"
+        type="text"
+        placeholder="Artist"
+      >
+
+      <input
+        id="url"
+        type="url"
+        placeholder="YouTube URL"
+      >
+
+      <button onclick="publishSong()">🚀 Publish Song</button>
+
+      <button class="logout" onclick="logout()">Logout</button>
+
+      <div id="status"></div>
+
+    </div>
+
+    <h2 style="margin-top:30px;">Published Songs</h2>
+
+    <div id="songList"></div>
+
+  </div>
 
 </div>
+
 
 <script>
 
 let supabaseClient;
+
 
 async function init() {
 
@@ -154,49 +196,133 @@ async function init() {
       config.key
     );
 
-    loadSongs();
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      showAdminPanel();
+    }
 
   } catch (error) {
 
-    document.getElementById("status").textContent =
+    document.getElementById("loginStatus").textContent =
       "❌ " + error.message;
 
   }
 
 }
 
+
+async function login() {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const status =
+    document.getElementById("loginStatus");
+
+  if (!email || !password) {
+
+    status.textContent =
+      "⚠️ Email and password required.";
+
+    return;
+
+  }
+
+  status.textContent = "Logging in...";
+
+  const { error } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (error) {
+
+    status.textContent =
+      "❌ " + error.message;
+
+    return;
+
+  }
+
+  status.textContent = "";
+
+  showAdminPanel();
+
+}
+
+
+async function logout() {
+
+  await supabaseClient.auth.signOut();
+
+  document.getElementById("adminPanel").style.display = "none";
+  document.getElementById("loginPanel").style.display = "block";
+
+}
+
+
+function showAdminPanel() {
+
+  document.getElementById("loginPanel").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+
+  loadSongs();
+
+}
+
+
 async function publishSong() {
 
-  const title = document.getElementById("title").value.trim();
-  const artist = document.getElementById("artist").value.trim();
-  const url = document.getElementById("url").value.trim();
-  const status = document.getElementById("status");
+  const title =
+    document.getElementById("title").value.trim();
+
+  const artist =
+    document.getElementById("artist").value.trim();
+
+  const url =
+    document.getElementById("url").value.trim();
+
+  const status =
+    document.getElementById("status");
 
   if (!title || !artist || !url) {
-    status.textContent = "⚠️ Please fill all fields.";
+
+    status.textContent =
+      "⚠️ Please fill all fields.";
+
     return;
+
   }
 
   status.textContent = "Publishing...";
 
-  const { error } = await supabaseClient
-    .from("songs")
-    .insert([
-      {
+  const { error } =
+    await supabaseClient
+      .from("songs")
+      .insert([{
         title: title,
         artist: artist,
         url: url
-      }
-    ]);
+      }]);
 
   if (error) {
 
-    status.textContent = "❌ " + error.message;
+    status.textContent =
+      "❌ " + error.message;
+
     return;
 
   }
 
-  status.textContent = "✅ Song published successfully!";
+  status.textContent =
+    "✅ Song published successfully!";
 
   document.getElementById("title").value = "";
   document.getElementById("artist").value = "";
@@ -206,14 +332,17 @@ async function publishSong() {
 
 }
 
+
 async function loadSongs() {
 
-  const list = document.getElementById("songList");
+  const list =
+    document.getElementById("songList");
 
-  const { data, error } = await supabaseClient
-    .from("songs")
-    .select("id,title,artist,url")
-    .order("id", { ascending: false });
+  const { data, error } =
+    await supabaseClient
+      .from("songs")
+      .select("id,title,artist,url")
+      .order("id", { ascending: false });
 
   if (error) {
 
@@ -229,7 +358,7 @@ async function loadSongs() {
   if (!data || data.length === 0) {
 
     list.innerHTML =
-      "<p style='color:#9ca3af;margin-top:15px;'>No songs yet.</p>";
+      "<p style='color:#9ca3af;'>No songs yet.</p>";
 
     return;
 
@@ -237,12 +366,13 @@ async function loadSongs() {
 
   list.innerHTML = data.map(song => `
     <div class="song">
-      <div class="song-title">${escapeHtml(song.title)}</div>
-      <div class="song-artist">${escapeHtml(song.artist)}</div>
+      <strong>${escapeHtml(song.title)}</strong>
+      <div class="artist">${escapeHtml(song.artist || "")}</div>
     </div>
   `).join("");
 
 }
+
 
 function escapeHtml(text) {
 
@@ -255,9 +385,10 @@ function escapeHtml(text) {
 
 }
 
+
 init();
 
 </script>
 
 </body>
-  </html>
+</html>
