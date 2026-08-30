@@ -612,36 +612,34 @@ function togglePlay() {
     audio.pause();
   }
     }
-    
-  // YouTube link
-  const videoId = getYouTubeVideoId(url);
+    // YouTube link
+const videoId = getYouTubeVideoId(url);
 
-  if (!videoId) {
-    window.open(url, "_blank");
-    return;
-  }
+if (!videoId) {
+  window.open(url, "_blank");
+  return;
+}
 
-  const audio = document.getElementById("moonifyAudio");
+const audio = document.getElementById("moonifyAudio");
 
-  if (audio) {
-    audio.pause();
-    audio.style.display = "none";
-  }
+if (audio) {
+  audio.pause();
+  audio.style.display = "none";
+}
 
-  iframe.style.display = "block";
+iframe.style.display = "block";
 
-  iframe.src =
-    "https://www.youtube-nocookie.com/embed/" +
-    videoId +
-    "?autoplay=1&rel=0";
+iframe.src =
+  "https://www.youtube-nocookie.com/embed/" +
+  videoId +
+  "?autoplay=1&rel=0";
 
-  player.style.display = "block";
+player.style.display = "block";
 
-  player.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-    }
+player.scrollIntoView({
+  behavior: "smooth",
+  block: "start"
+});
 
 
     function closePlayer() {
