@@ -313,10 +313,12 @@ placeholder="🔍 Search songs..."
 
   <script>
 
-    const tg = window.Telegram.WebApp;
+    const tg = window.Telegram?.WebApp;
 
-    tg.ready();
-    tg.expand();
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
 
     let songs = [];
 let currentSongIndex = -1;
