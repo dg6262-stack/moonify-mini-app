@@ -356,8 +356,7 @@ let currentSongIndex = -1;
         const { data, error } =
           await supabaseClient
             .from("songs")
-            .select("title, artist, url, cover_url");
-
+            .select("*");
         if (error) {
           throw new Error(error.message);
         }
