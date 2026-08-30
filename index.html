@@ -460,7 +460,7 @@ const song = songs[index];
   artist.textContent = song?.artist || "Moonify";
 
   if (cover) {
-    cover.src = song?.cover_url || "";
+    cover.src = song && song.cover_url ? song.cover_url : "";
     cover.style.display = song?.cover_url ? "block" : "none";
   }
 
