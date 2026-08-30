@@ -496,17 +496,15 @@ function previousSong() {
 }
 
 function togglePlay() {
-  const audio = document.getElementById("moonifyAudio");
-  const button = document.querySelector(".player-controls button:nth-child(2)");
+  const audio =
+    document.getElementById("moonifyAudio");
 
   if (!audio) return;
 
   if (audio.paused) {
     audio.play();
-    if (button) button.textContent = "⏸️";
   } else {
     audio.pause();
-    if (button) button.textContent = "▶️";
   }
 }
   // MP3 file
