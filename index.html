@@ -332,8 +332,10 @@ console.log("Moonify JS loaded");
       try {
 
         const configResponse =
-          await fetch("/api/config");
+  await fetch("/api/config");
 
+console.log("CONFIG RESPONSE:", configResponse.status);
+        
         if (!configResponse.ok) {
           throw new Error(
             "Could not load Supabase configuration."
