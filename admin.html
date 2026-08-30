@@ -628,16 +628,23 @@ const coverFile =
       "Uploading song...";
 
     let songUrl =
-      directUrl;
+  directUrl;
 
+if (file) {
 
-    if (file) {
+  songUrl =
+    await uploadMP3(file);
 
-      songUrl =
-        await uploadMP3(file);
+}
 
-    }
+let coverUrl = null;
 
+if (coverFile) {
+
+  coverUrl =
+    await uploadCoverImage(coverFile);
+
+  }
 
     status.textContent =
       "Publishing...";
@@ -647,10 +654,11 @@ const coverFile =
       await supabaseClient
         .from("songs")
         .insert({
-          title: title,
-          artist: artist,
-          url: songUrl
-        });
+  title: title,
+  artist: artist,
+  url: songUrl,
+  cover_url: coverUrl
+});
 
 
     if (error) {
