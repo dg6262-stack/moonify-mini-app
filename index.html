@@ -497,13 +497,16 @@ function previousSong() {
 
 function togglePlay() {
   const audio = document.getElementById("moonifyAudio");
+  const button = document.querySelector(".player-controls button:nth-child(2)");
 
   if (!audio) return;
 
   if (audio.paused) {
     audio.play();
+    if (button) button.textContent = "⏸️";
   } else {
     audio.pause();
+    if (button) button.textContent = "▶️";
   }
 }
   // MP3 file
@@ -543,10 +546,30 @@ audio.style.marginTop = "10px";
       player.appendChild(audio);
     }
 
-    audio.src = url;
-    audio.style.display = "block";
-    audio.play().catch(() => {});
+   audio.src = url;
+audio.style.display = "block";
 
+const playButton =
+  document.querySelector(".player-controls button:nth-child(2)");
+
+if (playButton) {
+  playButton.textContent = "⏸️";
+}
+
+audio.play().catch(() => {});
+  audio.onplay = () => {
+  const button =
+    document.querySelector(".player-controls button:nth-child(2)");
+
+  if (button) button.textContent = "⏸️";
+};
+
+audio.onpause = () => {
+  const button =
+    document.querySelector(".player-controls button:nth-child(2)");
+
+  if (button) button.textContent = "▶️";
+};
     player.scrollIntoView({
       behavior: "smooth",
       block: "start"
