@@ -611,74 +611,7 @@ function togglePlay() {
     audio.pause();
   }
     }
-  // MP3 file
-if (
-  url.toLowerCase().includes(".mp3") ||
-  url.includes("/storage/v1/object/")
-) {
 
-  iframe.src = "";
-  player.style.display = "block";
-  iframe.style.display = "none";
-
-  const videoWrapper =
-    document.querySelector(".video-wrapper");
-
-  if (videoWrapper) {
-    videoWrapper.style.display = "none";
-  }
-
-    iframe.src = "";
-    
-    player.style.display = "block";
-
-    // YouTube iframe ko hide karke audio player use karenge
-    iframe.style.display = "none";
-
-    let audio = document.getElementById("moonifyAudio");
-
-    if (!audio) {
-      audio = document.createElement("audio");
-audio.id = "moonifyAudio";
-audio.controls = true;
-audio.controlsList = "nodownload";
-audio.style.width = "100%";
-audio.style.marginTop = "10px";
-
-      player.appendChild(audio);
-    }
-
-   audio.src = url;
-audio.style.display = "block";
-
-const playButton =
-  document.querySelector(".player-controls button:nth-child(2)");
-
-if (playButton) {
-  playButton.textContent = "⏸️";
-}
-
-audio.play().catch(() => {});
-  audio.onplay = () => {
-  const button =
-    document.querySelector(".player-controls button:nth-child(2)");
-
-  if (button) button.textContent = "⏸️";
-};
-
-audio.onpause = () => {
-  const button =
-    document.querySelector(".player-controls button:nth-child(2)");
-
-  if (button) button.textContent = "▶️";
-};
-    player.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-    return;
-  }
 
   // YouTube link
   const videoId = getYouTubeVideoId(url);
