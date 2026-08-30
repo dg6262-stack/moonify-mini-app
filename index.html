@@ -567,10 +567,7 @@ function playSong(index, encodedUrl) {
     block: "start"
   });
 }
-
-
 function nextSong() {
-
   if (!songs.length) return;
 
   const nextIndex =
@@ -586,9 +583,7 @@ function nextSong() {
   );
 }
 
-
 function previousSong() {
-
   if (!songs.length) return;
 
   const previousIndex =
@@ -604,9 +599,7 @@ function previousSong() {
   );
 }
 
-
 function togglePlay() {
-
   const audio =
     document.getElementById("moonifyAudio");
 
@@ -617,7 +610,7 @@ function togglePlay() {
   } else {
     audio.pause();
   }
-      }
+    }
   // MP3 file
 if (
   url.toLowerCase().includes(".mp3") ||
