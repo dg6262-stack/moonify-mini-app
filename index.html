@@ -438,7 +438,7 @@ let currentSongIndex = -1;
     }
 
 
-    function playSong(index, encodedUrl) {
+function playSong(index, encodedUrl) {
 
   currentSongIndex = index;
 
@@ -448,22 +448,129 @@ let currentSongIndex = -1;
     return;
   }
 
-const song = songs.find((item, i) => i === index);
+  const song = songs.find((item, i) => i === index);
 
-const player = document.getElementById("player");
-const iframe = document.getElementById("youtubePlayer");
-const title = document.getElementById("playerTitle");
-const artist = document.getElementById("playerArtist");
-const cover = document.getElementById("playerCover");
+  const player = document.getElementById("player");
+  const iframe = document.getElementById("youtubePlayer");
+  const title = document.getElementById("playerTitle");
+  const artist = document.getElementById("playerArtist");
+  const cover = document.getElementById("playerCover");
 
-title.textContent = song?.title || "Now Playing";
-artist.textContent = song?.artist || "Moonify";
+  title.textContent = song?.title || "Now Playing";
+  artist.textContent = song?.artist || "Moonify";
 
-if (cover) {
-  cover.src = song?.cover_url || "";
-  cover.style.display = song?.cover_url ? "block" : "none";
+  if (cover) {
+    cover.src = song?.cover_url || "";
+    cover.style.display = song?.cover_url ? "block" : "none";
+  }
+
+  if (
+    url.toLowerCase().includes(".mp3") ||
+    url.includes("/storage/v1/object/")
+  ) {
+
+    iframe.src = "";
+    iframe.style.display = "none";
+
+    const videoWrapper =
+      document.querySelector(".video-wrapper");
+
+    if (videoWrapper) {
+      videoWrapper.style.display = "none";
     }
+
+    player.style.display = "block";
+
+    let audio =
+      document.getElementById("moonifyAudio");
+
+    if (!audio) {
+      audio = document.createElement("audio");
+
+      audio.id = "moonifyAudio";
+      audio.controls = true;
+      audio.controlsList = "nodownload";
+      audio.style.width = "100%";
+      audio.style.marginTop = "10px";
+
+      player.appendChild(audio);
+    }
+
+    audio.src = url;
+    audio.style.display = "block";
+
+    audio.play().catch(() => {});
+
+    audio.onplay = () => {
+      const button =
+        document.querySelector(
+          ".player-controls button:nth-child(2)"
+        );
+
+      if (button) {
+        button.textContent = "⏸️";
+      }
+    };
+
+    audio.onpause = () => {
+      const button =
+        document.querySelector(
+          ".player-controls button:nth-child(2)"
+        );
+
+      if (button) {
+        button.textContent = "▶️";
+      }
+    };
+
+    player.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    return;
+  }
+
+  const videoId = getYouTubeVideoId(url);
+
+  if (!videoId) {
+    window.open(url, "_blank");
+    return;
+  }
+
+  const audio =
+    document.getElementById("moonifyAudio");
+
+  if (audio) {
+    audio.pause();
+    audio.style.display = "none";
+  }
+
+  const videoWrapper =
+    document.querySelector(".video-wrapper");
+
+  if (videoWrapper) {
+    videoWrapper.style.display = "block";
+  }
+
+  iframe.style.display = "block";
+
+  iframe.src =
+    "https://www.youtube-nocookie.com/embed/" +
+    videoId +
+    "?autoplay=1&rel=0";
+
+  player.style.display = "block";
+
+  player.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+
 function nextSong() {
+
   if (!songs.length) return;
 
   const nextIndex =
@@ -479,7 +586,9 @@ function nextSong() {
   );
 }
 
+
 function previousSong() {
+
   if (!songs.length) return;
 
   const previousIndex =
@@ -495,7 +604,9 @@ function previousSong() {
   );
 }
 
+
 function togglePlay() {
+
   const audio =
     document.getElementById("moonifyAudio");
 
@@ -506,7 +617,7 @@ function togglePlay() {
   } else {
     audio.pause();
   }
-}
+      }
   // MP3 file
 if (
   url.toLowerCase().includes(".mp3") ||
