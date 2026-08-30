@@ -343,8 +343,12 @@ placeholder="🔍 Search songs..."
           <div class="song">
 
             <div class="cover">
-              🎵
-            </div>
+  ${
+    song.cover_url
+      ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+      : "🎵"
+  }
+</div>
 
             <div class="info">
 
