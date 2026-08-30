@@ -515,7 +515,57 @@ async function uploadMP3(file) {
 
   return data.publicUrl;
 }
+async function uploadCoverImage(file) {
 
+  if (!file) {
+    return null;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Please select an image file.");
+  }
+
+  const safeName =
+    file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+  const uniqueName =
+    Date.now() +
+    "_" +
+    Math.random().toString(36).substring(2, 8) +
+    "_" +
+    safeName;
+
+  const filePath =
+    "covers/" + uniqueName;
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("Songs")
+      .upload(
+        filePath,
+        file,
+        {
+          contentType: file.type,
+          upsert: false
+        }
+      );
+
+  if (error) {
+    throw new Error(
+      "Cover upload failed: " +
+      error.message
+    );
+  }
+
+  const { data } =
+    supabaseClient
+      .storage
+      .from("Songs")
+      .getPublicUrl(filePath);
+
+  return data.publicUrl;
+    }
 
 /* =========================
    PUBLISH SONG
@@ -539,9 +589,14 @@ async function publishSong() {
     ).files[0];
 
   const directUrl =
-    document.getElementById(
-      "url"
-    ).value.trim();
+  document.getElementById(
+    "url"
+  ).value.trim();
+
+const coverFile =
+  document.getElementById(
+    "coverImage"
+  ).files[0];
 
   const status =
     document.getElementById(
