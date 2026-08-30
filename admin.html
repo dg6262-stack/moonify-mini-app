@@ -290,9 +290,11 @@ async function init() {
     }
 
     const config =
-      await response.json();
+  await response.json();
 
-    if (!config.url || !config.key) {
+console.log("SUPABASE URL:", config.url);
+
+if (!config.url || !config.key) {
       throw new Error(
         "Supabase configuration is missing."
       );
