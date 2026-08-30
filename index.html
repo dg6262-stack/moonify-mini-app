@@ -432,10 +432,21 @@ if (cover) {
     }
 
   // MP3 file
-  if (
-    url.toLowerCase().includes(".mp3") ||
-    url.includes("/storage/v1/object/")
-  ) {
+if (
+  url.toLowerCase().includes(".mp3") ||
+  url.includes("/storage/v1/object/")
+) {
+
+  iframe.src = "";
+  player.style.display = "block";
+  iframe.style.display = "none";
+
+  const videoWrapper =
+    document.querySelector(".video-wrapper");
+
+  if (videoWrapper) {
+    videoWrapper.style.display = "none";
+  }
 
     iframe.src = "";
     
