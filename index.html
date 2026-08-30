@@ -295,7 +295,7 @@ placeholder="🔍 Search songs..."
         const { data, error } =
           await supabaseClient
             .from("songs")
-            .select("title, artist, url");
+            .select("title, artist, url, cover_url");
 
         if (error) {
           throw new Error(error.message);
