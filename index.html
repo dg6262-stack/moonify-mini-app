@@ -71,43 +71,74 @@ body {
   box-shadow: 0 0 0 3px rgba(130,100,255,.10);
 }
 
-/* WELCOME CARD */
+/* WELCOME BANNER */
 
 .welcome-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
-  margin-bottom: 24px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #25234a, #141426);
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: 0 12px 30px rgba(0,0,0,.28);
-  animation: playerOpen .4s ease;
+  min-height: 210px;
+  padding: 28px;
+  margin-bottom: 28px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 80% 50%, rgba(130, 60, 255, .55), transparent 38%),
+    linear-gradient(135deg, #321078, #17102f 65%, #0d0b1d);
+  border: 1px solid rgba(150, 90, 255, .55);
+  box-shadow:
+    0 15px 45px rgba(45, 10, 100, .35),
+    inset 0 0 40px rgba(120, 50, 255, .12);
+}
+
+.welcome-card::before {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: 40px;
+  top: -30px;
+  border-radius: 50%;
+  border: 1px solid rgba(190, 130, 255, .25);
+  box-shadow:
+    0 0 0 25px rgba(150, 80, 255, .05),
+    0 0 0 50px rgba(150, 80, 255, .04);
+}
+
+.welcome-text {
+  position: relative;
+  z-index: 2;
 }
 
 .welcome-small {
-  color: #999bb0;
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  margin-bottom: 6px;
+  color: #c4a7ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
 }
 
 .welcome-title {
-  font-size: 25px;
+  font-size: 38px;
   font-weight: 800;
+  color: white;
 }
 
 .welcome-subtitle {
-  color: #a3a5b5;
-  font-size: 13px;
-  margin-top: 5px;
+  color: #c9b8ec;
+  font-size: 16px;
+  margin-top: 8px;
 }
 
 .welcome-icon {
-  font-size: 48px;
-  filter: drop-shadow(0 8px 15px rgba(0,0,0,.3));
+  position: relative;
+  z-index: 2;
+  font-size: 82px;
+  margin-right: 20px;
+  filter:
+    drop-shadow(0 0 12px rgba(170, 100, 255, .9))
+    drop-shadow(0 15px 20px rgba(0,0,0,.5));
 }
 
 
