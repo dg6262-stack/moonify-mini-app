@@ -427,7 +427,21 @@ body {
     0 7px 25px rgba(130, 60, 255, .45),
     0 0 18px rgba(160, 90, 255, .25);
 }
+.control-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+}
 
+.play-icon {
+  font-size: 23px;
+  margin-left: 2px;
+  }
+    
 /* CLOSE */
 
 .close-player {
@@ -599,9 +613,17 @@ body {
   </div>
 
   <div class="player-controls">
-    <button onclick="previousSong()">⏮️</button>
-    <button onclick="togglePlay()">▶️</button>
-    <button onclick="nextSong()">⏭️</button>
+  <button onclick="previousSong()" aria-label="Previous song">
+    <span class="control-icon">‹</span>
+  </button>
+
+  <button onclick="togglePlay()" aria-label="Play or pause">
+    <span class="control-icon play-icon">▶</span>
+  </button>
+
+  <button onclick="nextSong()" aria-label="Next song">
+    <span class="control-icon">›</span>
+  </button>
   </div>
 
   <div class="video-wrapper">
