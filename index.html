@@ -71,6 +71,46 @@ body {
   box-shadow: 0 0 0 3px rgba(130,100,255,.10);
 }
 
+/* WELCOME CARD */
+
+.welcome-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #25234a, #141426);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 12px 30px rgba(0,0,0,.28);
+  animation: playerOpen .4s ease;
+}
+
+.welcome-small {
+  color: #999bb0;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.welcome-title {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.welcome-subtitle {
+  color: #a3a5b5;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.welcome-icon {
+  font-size: 48px;
+  filter: drop-shadow(0 8px 15px rgba(0,0,0,.3));
+}
+
+
 /* SECTION */
 
 .section-title {
@@ -467,7 +507,16 @@ body {
   </div>
 
 </div>
-
+  <div class="welcome-card">
+  <div class="welcome-text">
+    <div class="welcome-small">WELCOME TO</div>
+    <div class="welcome-title">Moonify 🌙</div>
+    <div class="welcome-subtitle">
+      Your music, your mood.
+    </div>
+  </div>
+  <div class="welcome-icon">🎧</div>
+  </div>
   <div class="section-title">🎵 Songs</div>
 
   <div id="songs">
