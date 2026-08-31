@@ -402,21 +402,24 @@ body {
 <body>
 
   <div class="header">
-    <div class="logo">🌙 Moonify</div>
-    <div class="subtitle">Your music space</div>
-  </div>
+  <div class="logo">🌙 Moonify</div>
+  <div class="subtitle">Your music space</div>
+</div>
 
-<input
-id="search"
-class="search"
-type="text"
-placeholder="🔍 Search songs..."
+<div class="search-wrap">
+  <span class="search-icon">⌕</span>
 
->
+  <input
+    id="search"
+    class="search"
+    type="text"
+    placeholder="Search songs..."
+  >
+</div>
 
-  <!-- PLAYER -->
+<!-- PLAYER -->
 
-  <div id="player" class="player">
+<div id="player" class="player">
 
   <div class="player-header">
 
@@ -429,42 +432,41 @@ placeholder="🔍 Search songs..."
     </div>
 
     <div class="player-info">
-  <div id="playerTitle" class="player-title">
-    Now Playing
-  </div>
+      <div id="playerTitle" class="player-title">
+        Now Playing
+      </div>
 
-  <div id="playerArtist" class="player-artist">
-    Moonify
-  </div>
-</div>
+      <div id="playerArtist" class="player-artist">
+        Moonify
+      </div>
+    </div>
 
-<div class="player-controls">
-  <button onclick="previousSong()">⏮️</button>
-  <button onclick="togglePlay()">▶️</button>
-  <button onclick="nextSong()">⏭️</button>
-</div>
-
-  <button
-    class="close-player"
-    onclick="closePlayer()"
-  >
-    ✕
-  </button>
-
-</div>
-
-<div class="video-wrapper">
-  <iframe
-    id="youtubePlayer"
-    src=""
-    title="Moonify Player"
-    allow="autoplay; encrypted-media; picture-in-picture"
-    allowfullscreen>
-  </iframe>
-</div>
-```
+    <button
+      class="close-player"
+      onclick="closePlayer()"
+    >
+      ✕
+    </button>
 
   </div>
+
+  <div class="player-controls">
+    <button onclick="previousSong()">⏮️</button>
+    <button onclick="togglePlay()">▶️</button>
+    <button onclick="nextSong()">⏭️</button>
+  </div>
+
+  <div class="video-wrapper">
+    <iframe
+      id="youtubePlayer"
+      src=""
+      title="Moonify Player"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+</div>
 
   <div class="section-title">🎵 Songs</div>
 
