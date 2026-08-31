@@ -227,7 +227,7 @@ body {
 .cover {
   width: 58px;
   height: 58px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #29284d, #151526);
   display: flex;
   align-items: center;
@@ -235,7 +235,10 @@ body {
   font-size: 23px;
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,.3);
+  border: 1px solid rgba(170, 100, 255, .18);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, .30),
+    0 0 12px rgba(130, 70, 255, .10);
 }
 
 .cover img {
@@ -251,25 +254,29 @@ body {
 .info {
   flex: 1;
   min-width: 0;
+  padding-right: 4px;
 }
 
 .title {
   font-size: 15px;
   font-weight: 700;
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: .1px;
 }
 
 .artist {
-  color: #8f92a5;
+  color: #aaa2c5;
   font-size: 12px;
-  margin-top: 6px;
+  font-weight: 500;
+  margin-top: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+    
 /* PLAY BUTTON */
 
 .play {
