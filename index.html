@@ -427,21 +427,23 @@ body {
     0 7px 25px rgba(130, 60, 255, .45),
     0 0 18px rgba(160, 90, 255, .25);
 }
-.control-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, sans-serif;
-  font-size: 32px;
-  font-weight: 300;
-  line-height: 1;
+.player-controls button svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.play-icon {
-  font-size: 23px;
-  margin-left: 2px;
-  }
-    
+.player-controls button:nth-child(2) svg {
+  width: 24px;
+  height: 24px;
+  fill: #ffffff;
+  stroke: none;
+}    
+
 /* CLOSE */
 
 .close-player {
@@ -613,17 +615,25 @@ body {
   </div>
 
   <div class="player-controls">
+
   <button onclick="previousSong()" aria-label="Previous song">
-    <span class="control-icon">‹</span>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 5v14M18 6l-9 6 9 6V6z"></path>
+    </svg>
   </button>
 
   <button onclick="togglePlay()" aria-label="Play or pause">
-    <span class="control-icon play-icon">▶</span>
+    <svg class="main-play-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5v14l11-7L8 5z"></path>
+    </svg>
   </button>
 
   <button onclick="nextSong()" aria-label="Next song">
-    <span class="control-icon">›</span>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18 5v14M6 6l9 6-9 6V6z"></path>
+    </svg>
   </button>
+
   </div>
 
   <div class="video-wrapper">
