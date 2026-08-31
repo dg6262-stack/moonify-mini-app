@@ -396,24 +396,36 @@ body {
   height: 45px;
   border: none;
   border-radius: 50%;
-  background: #28283f;
-  color: white;
+  background: linear-gradient(135deg, #30204f, #211735);
+  color: #fff;
   font-size: 18px;
   cursor: pointer;
-  transition: transform .18s ease, background .18s ease;
+  box-shadow:
+    0 5px 18px rgba(120, 70, 220, .25),
+    inset 0 1px rgba(255,255,255,.08);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.player-controls button:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 7px 22px rgba(130, 70, 255, .38),
+    0 0 14px rgba(150, 90, 255, .20);
 }
 
 .player-controls button:active {
-  transform: scale(.86);
+  transform: scale(.88);
 }
 
 .player-controls button:nth-child(2) {
   width: 56px;
   height: 56px;
   font-size: 23px;
-  background: white;
-  color: #08080d;
-  box-shadow: 0 6px 22px rgba(255,255,255,.14);
+  background: linear-gradient(135deg, #a45cff, #6c35d9);
+  color: #fff;
+  box-shadow:
+    0 7px 25px rgba(130, 60, 255, .45),
+    0 0 18px rgba(160, 90, 255, .25);
 }
 
 /* CLOSE */
