@@ -130,7 +130,24 @@ body {
   font-size: 16px;
   margin-top: 8px;
 }
+.headphone-glow {
+  font-size: 82px;
+  display: inline-block;
+  filter:
+    drop-shadow(0 0 8px rgba(190, 100, 255, .9))
+    drop-shadow(0 0 22px rgba(130, 60, 255, .7));
+  animation: headphoneFloat 3s ease-in-out infinite;
+}
 
+@keyframes headphoneFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
 .welcome-icon {
   position: relative;
   z-index: 2;
@@ -464,7 +481,29 @@ body {
   .player {
     padding: 14px;
   }
-}
+
+  .welcome-card {
+    min-height: 180px;
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .welcome-title {
+    font-size: 28px;
+  }
+
+  .welcome-subtitle {
+    font-size: 13px;
+  }
+
+  .welcome-icon {
+    margin-right: 0;
+  }
+
+  .headphone-glow {
+    font-size: 65px;
+  }
+    }
   </style>
       
 
@@ -546,7 +585,8 @@ body {
       Your music, your mood.
     </div>
   </div>
-  <div class="welcome-icon">🎧</div>
+  <div class="welcome-icon">
+  <div class="headphone-glow">🎧</div>
   </div>
   <div class="section-title">🎵 Songs</div>
 
