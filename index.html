@@ -184,7 +184,7 @@ body {
 .song {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 14px;
   background: linear-gradient(
     135deg,
     rgba(29,29,49,.96),
@@ -204,6 +204,10 @@ body {
 
 .song:active {
   transform: scale(.975);
+}
+.song:hover {
+  border-color: rgba(150, 120, 255, .30);
+  box-shadow: 0 10px 28px rgba(80, 40, 160, .22);
 }
 
 @media (hover: hover) {
@@ -273,18 +277,28 @@ body {
   height: 43px;
   border: none;
   border-radius: 50%;
-  background: #fff;
-  color: #08080d;
+  background: linear-gradient(135deg, #9b5cff, #6c35d9);
+  color: #fff;
   font-size: 17px;
   flex-shrink: 0;
   cursor: pointer;
-  box-shadow: 0 5px 18px rgba(255,255,255,.12);
-  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow:
+    0 5px 18px rgba(130, 70, 255, .35),
+    0 0 12px rgba(150, 90, 255, .18);
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+.play:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 7px 22px rgba(130, 70, 255, .45),
+    0 0 18px rgba(150, 90, 255, .28);
 }
 
 .play:active {
-  transform: scale(.88);
-  box-shadow: 0 2px 8px rgba(255,255,255,.08);
+  transform: scale(.90);
 }
 
 /* MESSAGE */
