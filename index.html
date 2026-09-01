@@ -649,6 +649,98 @@ body {
   filter: drop-shadow(0 6px 16px rgba(100, 50, 190, .18));
 }
 
+/* RECENTLY PLAYED */
+
+.recent-section {
+  margin: 4px 0 26px;
+}
+
+.recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 13px;
+}
+
+.recent-header .section-title {
+  margin: 0;
+}
+
+.see-all {
+  border: none;
+  background: transparent;
+  color: #a978ff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.recent-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+  scrollbar-width: none;
+}
+
+.recent-list::-webkit-scrollbar {
+  display: none;
+}
+
+.recent-card {
+  min-width: 145px;
+  max-width: 145px;
+  padding: 10px;
+  border-radius: 17px;
+  background: linear-gradient(
+    145deg,
+    rgba(35, 30, 57, .96),
+    rgba(19, 17, 31, .96)
+  );
+  border: 1px solid rgba(255, 255, 255, .06);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+}
+
+.recent-cover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 13px;
+  background: linear-gradient(
+    135deg,
+    #302653,
+    #171525
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  overflow: hidden;
+}
+
+.recent-info {
+  min-width: 0;
+  margin-top: 10px;
+}
+
+.recent-title {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-artist {
+  color: #8f8aa3;
+  font-size: 11px;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+    
 /* MOONIFY HOME HEADER */
 
 .header {
@@ -831,6 +923,45 @@ body {
 
 </div>
 
+<!-- RECENTLY PLAYED -->
+
+<div class="recent-section">
+
+  <div class="recent-header">
+    <div class="section-title">Recently Played</div>
+    <button class="see-all" type="button">See all</button>
+  </div>
+
+  <div class="recent-list">
+
+    <div class="recent-card">
+      <div class="recent-cover">🎵</div>
+      <div class="recent-info">
+        <div class="recent-title">Night Changes</div>
+        <div class="recent-artist">One Direction</div>
+      </div>
+    </div>
+
+    <div class="recent-card">
+      <div class="recent-cover">🎧</div>
+      <div class="recent-info">
+        <div class="recent-title">Sunflower</div>
+        <div class="recent-artist">Post Malone</div>
+      </div>
+    </div>
+
+    <div class="recent-card">
+      <div class="recent-cover">🎶</div>
+      <div class="recent-info">
+        <div class="recent-title">Sajni</div>
+        <div class="recent-artist">Arijit Singh</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+  
 <div class="section-title">🎵 Songs</div>
 
   <div id="songs">
