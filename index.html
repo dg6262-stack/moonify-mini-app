@@ -932,46 +932,20 @@ body {
     <button class="see-all" type="button">See all</button>
   </div>
 
-  <div class="recent-list">
-
-    <div class="recent-card">
-      <div class="recent-cover">🎵</div>
-      <div class="recent-info">
-        <div class="recent-title">Night Changes</div>
-        <div class="recent-artist">One Direction</div>
-      </div>
-    </div>
-
-    <div class="recent-card">
-      <div class="recent-cover">🎧</div>
-      <div class="recent-info">
-        <div class="recent-title">Sunflower</div>
-        <div class="recent-artist">Post Malone</div>
-      </div>
-    </div>
-
-    <div class="recent-card">
-      <div class="recent-cover">🎶</div>
-      <div class="recent-info">
-        <div class="recent-title">Sajni</div>
-        <div class="recent-artist">Arijit Singh</div>
-      </div>
-    </div>
-
-  </div>
+  <div class="recent-list" id="recentList"></div>
 
 </div>
-  
+
 <div class="section-title">🎵 Songs</div>
 
-  <div id="songs">
-    <div class="message">
-      Loading songs...
-    </div>
+<div id="songs">
+  <div class="message">
+    Loading songs...
   </div>
+</div>
 
-  <script>
-
+<script>
+  
     const tg = window.Telegram?.WebApp;
 
 if (tg) {
@@ -1099,7 +1073,99 @@ console.log("CONFIG RESPONSE:", configResponse.status);
         `).join("");
     }
 
+function addToRecentlyPlayed(song) {
+  if (!song) return;
 
+  let recent = [];
+
+  try {
+    recent = JSON.parse(
+      localStorage.getItem("moonifyRecentlyPlayed") || "[]"
+    );
+  } catch (error) {
+    recent = [];
+  }
+
+  const songId =
+    song.id ||
+    song.url ||
+    song.title + "|" + song.artist;
+
+  recent = recent.filter(item => {
+    const itemId =
+      item.id ||
+      item.url ||
+      item.title + "|" + item.artist;
+
+    return itemId !== songId;
+  });
+
+  recent.unshift({
+    id: songId,
+    title: song.title || "Unknown",
+    artist: song.artist || "Unknown Artist",
+    cover_url: song.cover_url || "",
+    url: song.url || ""
+  });
+
+  recent = recent.slice(0, 10);
+
+  localStorage.setItem(
+    "moonifyRecentlyPlayed",
+    JSON.stringify(recent)
+  );
+
+  displayRecentlyPlayed();
+}
+
+
+function displayRecentlyPlayed() {
+  const container = document.getElementById("recentList");
+
+  if (!container) return;
+
+  let recent = [];
+
+  try {
+    recent = JSON.parse(
+      localStorage.getItem("moonifyRecentlyPlayed") || "[]"
+    );
+  } catch (error) {
+    recent = [];
+  }
+
+  if (!recent.length) {
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = recent.map(song => `
+    <div class="recent-card">
+
+      <div class="recent-cover">
+        ${
+          song.cover_url
+            ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+            : "🎵"
+        }
+      </div>
+
+      <div class="recent-info">
+
+        <div class="recent-title">
+          ${escapeHtml(song.title)}
+        </div>
+
+        <div class="recent-artist">
+          ${escapeHtml(song.artist)}
+        </div>
+
+      </div>
+
+    </div>
+  `).join("");
+}
+  
 function playSong(index, encodedUrl) {
 
   currentSongIndex = index;
@@ -1112,6 +1178,8 @@ function playSong(index, encodedUrl) {
 
 const song = songs[index];
 
+addToRecentlyPlayed(song);
+  
   const player = document.getElementById("player");
   const iframe = document.getElementById("youtubePlayer");
   const title = document.getElementById("playerTitle");
@@ -1423,7 +1491,8 @@ function togglePlay() {
 
 
     loadSongs();
-
+    displayRecentlyPlayed();
+  
   </script>
 
 </body>
