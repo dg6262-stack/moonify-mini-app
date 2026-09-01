@@ -702,6 +702,24 @@ body {
   box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
 }
 
+.recent-card {
+  cursor: pointer;
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.recent-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(165, 100, 255, .25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .30);
+}
+
+.recent-card:active {
+  transform: scale(.97);
+}
+    
 .recent-cover {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -986,7 +1004,13 @@ body {
 
   <div class="recent-header">
     <div class="section-title">Recently Played</div>
-    <button class="see-all" type="button">See all</button>
+    <button
+  class="see-all"
+  type="button"
+  onclick="showAllRecentlyPlayed()"
+>
+  See all
+    </button>
   </div>
 
   <div class="recent-list" id="recentList"></div>
@@ -1575,8 +1599,62 @@ function togglePlay() {
       );
 
 
-    loadSongs();
-    displayRecentlyPlayed();
+  function showAllRecentlyPlayed() {
+  const recent = JSON.parse(
+    localStorage.getItem("moonifyRecentlyPlayed") || "[]"
+  );
+
+  if (!recent.length) {
+    alert("No recently played songs yet.");
+    return;
+  }
+
+  const container = document.getElementById("recentList");
+
+  if (!container) return;
+
+  container.innerHTML = recent.map(song => `
+    <div
+      class="recent-card"
+      onclick="playRecentSong('${encodeURIComponent(song.url || "")}')"
+    >
+
+      <div class="recent-cover">
+        ${
+          song.cover_url
+            ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+            : "🎵"
+        }
+
+        <button
+          class="recent-play"
+          type="button"
+          onclick="event.stopPropagation(); playRecentSong('${encodeURIComponent(song.url || "")}')"
+        >
+          ▶
+        </button>
+      </div>
+
+      <div class="recent-info">
+
+        <div class="recent-title">
+          ${escapeHtml(song.title)}
+        </div>
+
+        <div class="recent-artist">
+          ${escapeHtml(song.artist)}
+        </div>
+
+      </div>
+
+    </div>
+  `).join("");
+}
+
+
+loadSongs();
+displayRecentlyPlayed();
+
   
   </script>
 
