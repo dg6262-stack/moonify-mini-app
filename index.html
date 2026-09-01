@@ -871,7 +871,130 @@ body {
   font-size: 13px;
   margin-top: 5px;
 }
-    
+
+/* RECENTLY PLAYED FULL SCREEN */
+
+.recent-all-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #080b14;
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.recent-all-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0 24px;
+}
+
+.recent-back {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(170, 100, 255, .18);
+  border-radius: 50%;
+  background: rgba(40, 32, 65, .75);
+  color: #fff;
+  font-size: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.recent-all-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.recent-all-subtitle {
+  color: #8f8aa3;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.recent-all-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recent-all-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px;
+  border-radius: 16px;
+  background: linear-gradient(
+    145deg,
+    rgba(35, 30, 57, .96),
+    rgba(19, 17, 31, .96)
+  );
+  border: 1px solid rgba(255, 255, 255, .06);
+}
+
+.recent-all-cover {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #201a35;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.recent-all-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recent-all-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.recent-all-song-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-all-artist {
+  color: #8f8aa3;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.recent-all-play {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #a855f7,
+    #7c3aed
+  );
+  color: #fff;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 </style>
       
 </head>
@@ -1007,7 +1130,7 @@ body {
     <button
   class="see-all"
   type="button"
-  onclick="showAllRecentlyPlayed()"
+  onclick="openRecentlyPlayed()"
 >
   See all
     </button>
@@ -1025,6 +1148,39 @@ body {
   </div>
 </div>
 
+<!-- RECENTLY PLAYED FULL SCREEN -->
+
+<div id="recentAllScreen" class="recent-all-screen">
+
+  <div class="recent-all-header">
+
+    <button
+      class="recent-back"
+      type="button"
+      onclick="closeRecentlyPlayed()"
+    >
+      ←
+    </button>
+
+    <div>
+      <div class="recent-all-title">
+        Recently Played
+      </div>
+
+      <div class="recent-all-subtitle">
+        Your listening history
+      </div>
+    </div>
+
+  </div>
+
+  <div
+    id="recentAllList"
+    class="recent-all-list"
+  ></div>
+
+</div>
+  
 <script>
   
     const tg = window.Telegram?.WebApp;
@@ -1651,7 +1807,78 @@ function togglePlay() {
   `).join("");
 }
 
+function renderRecentlyPlayedScreen() {
+  const recent = JSON.parse(
+    localStorage.getItem("moonifyRecentlyPlayed") || "[]"
+  );
 
+  const container = document.getElementById("recentAllList");
+
+  if (!container) return;
+
+  if (!recent.length) {
+    container.innerHTML = `
+      <div class="message">
+        No recently played songs yet.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = recent.map(song => `
+    <div class="recent-all-card">
+
+      <div class="recent-all-cover">
+        ${
+          song.cover_url
+            ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+            : "🎵"
+        }
+      </div>
+
+      <div class="recent-all-info">
+
+        <div class="recent-all-song-title">
+          ${escapeHtml(song.title)}
+        </div>
+
+        <div class="recent-all-artist">
+          ${escapeHtml(song.artist)}
+        </div>
+
+      </div>
+
+      <button
+        class="recent-all-play"
+        type="button"
+        onclick="playRecentSong('${encodeURIComponent(song.url || "")}')"
+      >
+        ▶
+      </button>
+
+    </div>
+  `).join("");
+}
+
+function openRecentlyPlayed() {
+  const screen = document.getElementById("recentAllScreen");
+
+  if (!screen) return;
+
+  renderRecentlyPlayedScreen();
+
+  screen.style.display = "block";
+}
+
+
+function closeRecentlyPlayed() {
+  const screen = document.getElementById("recentAllScreen");
+
+  if (!screen) return;
+
+  screen.style.display = "none";
+}
+  
 loadSongs();
 displayRecentlyPlayed();
 
