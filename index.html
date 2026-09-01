@@ -1143,6 +1143,166 @@ body {
   justify-content: center;
   cursor: pointer;
   }
+
+/* RECENTLY PLAYED FULL SCREEN */
+
+.recent-all-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: none;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(120, 60, 220, .18),
+      transparent 35%
+    ),
+    #080711;
+
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.recent-all-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.recent-back {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(170, 100, 255, .18);
+  border-radius: 50%;
+
+  background: rgba(40, 32, 65, .75);
+  color: #fff;
+
+  font-size: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.recent-all-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.recent-all-subtitle {
+  color: #8f8aa3;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.recent-all-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-all-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  padding: 10px;
+
+  border-radius: 17px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(35, 30, 57, .96),
+    rgba(19, 17, 31, .96)
+  );
+
+  border: 1px solid rgba(255, 255, 255, .06);
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, .22);
+}
+
+.recent-all-cover {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+
+  border-radius: 13px;
+
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    #302653,
+    #171525
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 25px;
+}
+
+.recent-all-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recent-all-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.recent-all-song-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-all-artist {
+  color: #8f8aa3;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.recent-all-play {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #a855f7,
+    #7c3aed
+  );
+
+  color: #fff;
+  font-size: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
     
 </style>
       
