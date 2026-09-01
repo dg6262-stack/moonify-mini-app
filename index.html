@@ -50,11 +50,30 @@ body {
   font-size: 13px;
 }
     
- /* SEARCH */
+/* SEARCH */
+
+.search-wrap {
+  position: relative;
+  width: 100%;
+  margin: 16px 0 24px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #b9b1d0;
+  font-size: 22px;
+  line-height: 1;
+  z-index: 2;
+  pointer-events: none;
+}
 
 .search {
   width: 100%;
-  padding: 15px 18px;
+  box-sizing: border-box;
+  padding: 15px 18px 15px 50px;
   border: 1px solid rgba(170, 100, 255, .16);
   outline: none;
   border-radius: 17px;
@@ -65,7 +84,6 @@ body {
       rgba(20, 17, 36, .96)
     );
   color: #fff;
-  margin: 16px 0 24px;
   font-size: 15px;
   box-shadow:
     0 8px 25px rgba(0, 0, 0, .22),
