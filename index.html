@@ -1406,6 +1406,27 @@ body {
   flex-direction: column;
   gap: 10px;
 }
+
+.library-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.library-back {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(170, 100, 255, .18);
+  border-radius: 50%;
+  background: rgba(40, 32, 65, .75);
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
     
 </style>
       
@@ -2349,6 +2370,31 @@ function bottomNavLibrary() {
     });
   }
 }
+
+function closeLibraryScreen() {
+  const library = document.getElementById("libraryScreen");
+
+  if (library) {
+    library.style.display = "none";
+  }
+
+  document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  const home = document.querySelector(
+    '.bottom-nav-item[onclick="bottomNavHome()"]'
+  );
+
+  if (home) {
+    home.classList.add("active");
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
   
 loadSongs();
 displayRecentlyPlayed();
@@ -2361,10 +2407,23 @@ displayRecentlyPlayed();
 <div id="libraryScreen" class="library-screen">
 
   <div class="library-header">
+
+  <button
+    class="library-back"
+    type="button"
+    onclick="closeLibraryScreen()"
+  >
+    ←
+  </button>
+
+  <div>
     <div class="library-title">Your Library</div>
-    <div class="library-subtitle">Your recently played music</div>
+    <div class="library-subtitle">
+      Your recently played music
+    </div>
   </div>
 
+  </div>
   <div id="libraryList" class="library-list"></div>
 
 </div>
