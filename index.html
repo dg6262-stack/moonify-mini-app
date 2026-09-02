@@ -1598,6 +1598,119 @@ body {
   gap: 10px;
 }
 
+/* PLAYING NOW SCREEN */
+
+.playing-now-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 7000;
+  display: none;
+  background:
+    radial-gradient(circle at top, rgba(120,60,220,.22), transparent 38%),
+    #080711;
+  padding: 24px 20px 120px;
+  overflow-y: auto;
+}
+
+.playing-now-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.playing-now-back {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(170,100,255,.18);
+  border-radius: 50%;
+  background: rgba(40,32,65,.75);
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.playing-now-header-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.playing-now-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.playing-now-cover {
+  width: min(82vw, 330px);
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  background: linear-gradient(135deg,#302653,#171525);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 70px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.45);
+}
+
+.playing-now-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playing-now-info {
+  width: 100%;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.playing-now-title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playing-now-artist {
+  color: #8f8aa3;
+  font-size: 13px;
+  margin-top: 7px;
+}
+
+.playing-now-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 30px;
+}
+
+.playing-now-controls button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(40,32,65,.8);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.playing-now-controls .playing-now-main {
+  width: 62px;
+  height: 62px;
+  background: linear-gradient(135deg,#a855f7,#7c3aed);
+  font-size: 23px;
+}
+    
 /* SEARCH RESULTS POLISH */
 
 .search-results {
@@ -2687,6 +2800,58 @@ function clearFullSearch() {
     searchResults.innerHTML = "";
   }
 }
+
+function openPlayingNow() {
+  const screen = document.getElementById("playingNowScreen");
+
+  if (!screen) return;
+
+  screen.style.display = "block";
+
+  updatePlayingNow();
+}
+
+function closePlayingNow() {
+  const screen = document.getElementById("playingNowScreen");
+
+  if (!screen) return;
+
+  screen.style.display = "none";
+}
+
+function updatePlayingNow() {
+  const title = document.getElementById("playingNowTitle");
+  const artist = document.getElementById("playingNowArtist");
+  const cover = document.getElementById("playingNowCover");
+
+  if (!title || !artist || !cover) return;
+
+  if (
+    typeof currentSongIndex !== "number" ||
+    !songs[currentSongIndex]
+  ) {
+    title.textContent = "Nothing playing";
+    artist.textContent = "—";
+    cover.innerHTML = "🎵";
+    return;
+  }
+
+  const song = songs[currentSongIndex];
+
+  title.textContent = song.title || "Unknown";
+  artist.textContent = song.artist || "Unknown Artist";
+
+  if (song.cover_url) {
+    cover.innerHTML = `
+      <img
+        src="${escapeHtml(song.cover_url)}"
+        alt="Cover"
+      >
+    `;
+  } else {
+    cover.innerHTML = "🎵";
+  }
+}
   
 function bottomNavLibrary() {
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
@@ -2866,6 +3031,57 @@ displayRecentlyPlayed();
   </div>
 
   <div id="searchResults" class="search-results"></div>
+
+</div>
+
+<!-- PLAYING NOW SCREEN -->
+<div id="playingNowScreen" class="playing-now-screen">
+
+  <div class="playing-now-header">
+    <button
+      class="playing-now-back"
+      type="button"
+      onclick="closePlayingNow()"
+    >
+      ↓
+    </button>
+
+    <div class="playing-now-header-title">
+      Playing Now
+    </div>
+  </div>
+
+  <div class="playing-now-content">
+
+    <div class="playing-now-cover" id="playingNowCover">
+      🎵
+    </div>
+
+    <div class="playing-now-info">
+      <div class="playing-now-title" id="playingNowTitle">
+        Nothing playing
+      </div>
+
+      <div class="playing-now-artist" id="playingNowArtist">
+        —
+      </div>
+    </div>
+
+    <div class="playing-now-controls">
+      <button type="button" onclick="previousSong()">⏮</button>
+
+      <button
+        type="button"
+        class="playing-now-main"
+        onclick="togglePlay()"
+      >
+        ▶
+      </button>
+
+      <button type="button" onclick="nextSong()">⏭</button>
+    </div>
+
+  </div>
 
 </div>
   
