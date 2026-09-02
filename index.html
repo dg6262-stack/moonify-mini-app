@@ -2382,14 +2382,15 @@ function bottomNavLibrary() {
   const library = document.getElementById("libraryScreen");
 
   if (library) {
-  library.style.display = "block";
+    library.style.display = "block";
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   }
-  
+}
+
 function closeLibraryScreen() {
   const library = document.getElementById("libraryScreen");
 
@@ -2414,7 +2415,7 @@ function closeLibraryScreen() {
     behavior: "smooth"
   });
 }
-  
+
 loadSongs();
 displayRecentlyPlayed();
 
