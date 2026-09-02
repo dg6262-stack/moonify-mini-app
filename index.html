@@ -2199,6 +2199,8 @@ function playSong(index, encodedUrl) {
 
 const song = songs[index];
 
+updatePlayingNow();
+
 addToRecentlyPlayed(song);
   
   const player = document.getElementById("player");
