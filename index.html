@@ -2258,6 +2258,63 @@ function closeRecentlyPlayed() {
 
   screen.style.display = "none";
 }
+
+function bottomNavHome() {
+  document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  document
+    .querySelector('.bottom-nav-item[onclick="bottomNavHome()"]')
+    .classList.add("active");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function bottomNavSearch() {
+  document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  document
+    .querySelector('.bottom-nav-item[onclick="bottomNavSearch()"]')
+    .classList.add("active");
+
+  const search = document.getElementById("search");
+
+  if (search) {
+    search.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+    setTimeout(() => {
+      search.focus();
+    }, 400);
+  }
+}
+
+function bottomNavLibrary() {
+  document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  document
+    .querySelector('.bottom-nav-item[onclick="bottomNavLibrary()"]')
+    .classList.add("active");
+
+  const recent = document.querySelector(".recent-section");
+
+  if (recent) {
+    recent.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+}
   
 loadSongs();
 displayRecentlyPlayed();
@@ -2269,17 +2326,29 @@ displayRecentlyPlayed();
 
 <div class="bottom-nav">
 
-  <button class="bottom-nav-item active" type="button">
+  <button
+    class="bottom-nav-item active"
+    type="button"
+    onclick="bottomNavHome()"
+  >
     <span class="bottom-nav-icon">⌂</span>
     <span>Home</span>
   </button>
 
-  <button class="bottom-nav-item" type="button">
+  <button
+    class="bottom-nav-item"
+    type="button"
+    onclick="bottomNavSearch()"
+  >
     <span class="bottom-nav-icon">⌕</span>
     <span>Search</span>
   </button>
 
-  <button class="bottom-nav-item" type="button">
+  <button
+    class="bottom-nav-item"
+    type="button"
+    onclick="bottomNavLibrary()"
+  >
     <span class="bottom-nav-icon">♫</span>
     <span>Library</span>
   </button>
