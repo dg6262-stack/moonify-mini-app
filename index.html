@@ -2548,63 +2548,65 @@ function closeSearchScreen() {
   });
 }
 
-document.getElementById("fullSearch").addEventListener("input", function () {
-  const query = this.value.toLowerCase().trim();
-  const container = document.getElementById("searchResults");
+const fullSearch = document.getElementById("fullSearch");
 
-  if (!container) return;
+if (fullSearch) {
+  fullSearch.addEventListener("input", function () {
+    const query = this.value.toLowerCase().trim();
+    const container = document.getElementById("searchResults");
 
-  if (!query) {
-    container.innerHTML = "";
-    return;
-  }
+    if (!container) return;
 
-  const filtered = songs.filter(song =>
-    (song.title || "").toLowerCase().includes(query) ||
-    (song.artist || "").toLowerCase().includes(query)
-  );
+    if (!query) {
+      container.innerHTML = "";
+      return;
+    }
 
-  if (!filtered.length) {
-    container.innerHTML = `
-      <div class="message">
-        No songs found.
-      </div>
-    `;
-    return;
-  }
+    const filtered = songs.filter(song =>
+      (song.title || "").toLowerCase().includes(query) ||
+      (song.artist || "").toLowerCase().includes(query)
+    );
 
-  container.innerHTML = filtered.map(song => `
-    <div class="song">
-      <div class="cover">
-        ${
-          song.cover_url
-            ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
-            : "🎵"
-        }
-      </div>
+    if (!filtered.length) {
+      container.innerHTML = `
+        <div class="message">
+          No songs found.
+        </div>
+      `;
+      return;
+    }
 
-      <div class="info">
-        <div class="title">
-          ${escapeHtml(song.title || "Unknown")}
+    container.innerHTML = filtered.map(song => `
+      <div class="song">
+        <div class="cover">
+          ${
+            song.cover_url
+              ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+              : "🎵"
+          }
         </div>
 
-        <div class="artist">
-          ${escapeHtml(song.artist || "Unknown Artist")}
-        </div>
-      </div>
+        <div class="info">
+          <div class="title">
+            ${escapeHtml(song.title || "Unknown")}
+          </div>
 
-      <button
-        class="play"
-        type="button"
-        onclick="playSong(${songs.indexOf(song)}, '${encodeURIComponent(song.url || "")}')"
-      >
-        ▶
-      </button>
-    </div>
-  `).join("");
-   });
-  }
-  }
+          <div class="artist">
+            ${escapeHtml(song.artist || "Unknown Artist")}
+          </div>
+        </div>
+
+        <button
+          class="play"
+          type="button"
+          onclick="playSong(${songs.indexOf(song)}, '${encodeURIComponent(song.url || "")}')"
+        >
+          ▶
+        </button>
+      </div>
+    `).join("");
+  });
+}
   
 function bottomNavLibrary() {
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
