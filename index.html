@@ -2511,8 +2511,10 @@ function bottomNavSearch() {
   }
 
   if (searchScreen) {
-    searchScreen.style.display = "block";
-  }
+  searchScreen.style.display = "block";
+}
+
+setupFullSearch();
 
   if (fullSearch) {
     fullSearch.value = "";
@@ -2548,9 +2550,15 @@ function closeSearchScreen() {
   });
 }
 
-const fullSearch = document.getElementById("fullSearch");
+function setupFullSearch() {
+  const fullSearch = document.getElementById("fullSearch");
 
-if (fullSearch) {
+  if (!fullSearch || fullSearch.dataset.ready === "true") {
+    return;
+  }
+
+  fullSearch.dataset.ready = "true";
+
   fullSearch.addEventListener("input", function () {
     const query = this.value.toLowerCase().trim();
     const container = document.getElementById("searchResults");
