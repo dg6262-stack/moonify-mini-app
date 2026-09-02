@@ -2382,15 +2382,16 @@ function bottomNavLibrary() {
   const library = document.getElementById("libraryScreen");
 
   if (library) {
-    library.style.display = "block";
+  library.style.display = "block";
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+  renderRecentlyPlayedScreen();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
   }
-}
-
+  
 function closeLibraryScreen() {
   const library = document.getElementById("libraryScreen");
 
@@ -2444,8 +2445,8 @@ displayRecentlyPlayed();
   </div>
 
   </div>
-  <div id="libraryList" class="library-list"></div>
-
+  <div id="recentAllList" class="library-list"></div>
+  
 </div>
   
 <!-- BOTTOM NAVIGATION -->
