@@ -2673,6 +2673,20 @@ function setupFullSearch() {
     `).join("");
   });
 }
+
+function clearFullSearch() {
+  const fullSearch = document.getElementById("fullSearch");
+  const searchResults = document.getElementById("searchResults");
+
+  if (fullSearch) {
+    fullSearch.value = "";
+    fullSearch.focus();
+  }
+
+  if (searchResults) {
+    searchResults.innerHTML = "";
+  }
+}
   
 function bottomNavLibrary() {
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
