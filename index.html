@@ -1569,6 +1569,24 @@ body {
   color: #8f8aa3;
 }
 
+.search-clear {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  color: #b9b3c9;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+    
 .search-screen-input:focus {
   border-color: rgba(168,85,247,.45);
   box-shadow: 0 0 0 3px rgba(168,85,247,.08);
@@ -2814,15 +2832,23 @@ displayRecentlyPlayed();
   </div>
 
   <div class="search-screen-box">
-    <span class="search-screen-icon">⌕</span>
+  <span class="search-screen-icon">⌕</span>
 
-    <input
-      id="fullSearch"
-      class="search-screen-input"
-      type="text"
-      placeholder="Search songs or artists..."
-      autocomplete="off"
-    >
+  <input
+    id="fullSearch"
+    class="search-screen-input"
+    type="text"
+    placeholder="Search songs or artists..."
+    autocomplete="off"
+  >
+
+  <button
+    class="search-clear"
+    type="button"
+    onclick="clearFullSearch()"
+  >
+    ✕
+  </button>
   </div>
 
   <div id="searchResults" class="search-results"></div>
