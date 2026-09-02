@@ -2383,7 +2383,10 @@ function bottomNavLibrary() {
 
   if (library) {
     library.style.display = "block";
+    
+  displayLibrarySongs();
 
+    
     window.scrollTo({
       top: 0,
       behavior: "smooth"
@@ -2416,6 +2419,61 @@ function closeLibraryScreen() {
   });
 }
 
+function displayLibrarySongs() {
+  const container = document.getElementById("libraryList");
+
+  if (!container) return;
+
+  let recent = [];
+
+  try {
+    recent = JSON.parse(
+      localStorage.getItem("moonifyRecentlyPlayed") || "[]"
+    );
+  } catch (error) {
+    recent = [];
+  }
+
+  if (!recent.length) {
+    container.innerHTML = `
+      <div class="message">
+        No recently played songs yet.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = recent.map(song => `
+    <div class="song">
+      <div class="cover">
+        ${
+          song.cover_url
+            ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+            : "🎵"
+        }
+      </div>
+
+      <div class="info">
+        <div class="title">
+          ${escapeHtml(song.title || "Unknown")}
+        </div>
+
+        <div class="artist">
+          ${escapeHtml(song.artist || "Unknown Artist")}
+        </div>
+      </div>
+
+      <button
+        class="play"
+        type="button"
+        onclick="playRecentSong('${encodeURIComponent(song.url || "")}')"
+      >
+        ▶
+      </button>
+    </div>
+  `).join("");
+}
+  
 loadSongs();
 displayRecentlyPlayed();
 
