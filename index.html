@@ -2523,6 +2523,31 @@ function bottomNavSearch() {
   }
 }
 
+function closeSearchScreen() {
+  const searchScreen = document.getElementById("searchScreen");
+
+  if (searchScreen) {
+    searchScreen.style.display = "none";
+  }
+
+  document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  const home = document.querySelector(
+    '.bottom-nav-item[onclick="bottomNavHome()"]'
+  );
+
+  if (home) {
+    home.classList.add("active");
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+  
 function bottomNavLibrary() {
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
     btn.classList.remove("active");
