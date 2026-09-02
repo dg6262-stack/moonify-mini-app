@@ -1449,6 +1449,45 @@ body {
   font-size: 12px;
   margin-top: 4px;
 }
+
+.search-wrap {
+  position: relative;
+  width: 100%;
+  margin: 14px 0 20px;
+}
+
+.search {
+  width: 100%;
+  height: 52px;
+  padding: 0 18px 0 48px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 17px;
+  outline: none;
+  background: rgba(24,21,40,.92);
+  color: #fff;
+  font-size: 14px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+}
+
+.search::placeholder {
+  color: #8f8aa3;
+}
+
+.search:focus {
+  border-color: rgba(168,85,247,.45);
+  box-shadow: 0 0 0 3px rgba(168,85,247,.08);
+}
+
+.search-icon {
+  position: absolute;
+  left: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a978ff;
+  font-size: 22px;
+  pointer-events: none;
+}
     
 </style>
       
