@@ -2334,12 +2334,14 @@ function bottomNavLibrary() {
     .querySelector('.bottom-nav-item[onclick="bottomNavLibrary()"]')
     .classList.add("active");
 
-  const recent = document.querySelector(".recent-section");
+  const library = document.getElementById("libraryScreen");
 
-  if (recent) {
-    recent.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+  if (library) {
+    library.style.display = "block";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
     });
   }
 }
