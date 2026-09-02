@@ -2313,13 +2313,23 @@ function closeRecentlyPlayed() {
 }
 
 function bottomNavHome() {
+  const library = document.getElementById("libraryScreen");
+
+  if (library) {
+    library.style.display = "none";
+  }
+
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
     btn.classList.remove("active");
   });
 
-  document
-    .querySelector('.bottom-nav-item[onclick="bottomNavHome()"]')
-    .classList.add("active");
+  const home = document.querySelector(
+    '.bottom-nav-item[onclick="bottomNavHome()"]'
+  );
+
+  if (home) {
+    home.classList.add("active");
+  }
 
   window.scrollTo({
     top: 0,
