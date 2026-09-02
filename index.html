@@ -2284,10 +2284,9 @@ addToRecentlyPlayed(song);
       }
     };
 
-    player.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    player.style.display = "none";
+
+openPlayingNow();
 
     return;
   }
