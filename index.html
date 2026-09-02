@@ -2338,13 +2338,23 @@ function bottomNavHome() {
 }
 
 function bottomNavSearch() {
+  const library = document.getElementById("libraryScreen");
+
+  if (library) {
+    library.style.display = "none";
+  }
+
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
     btn.classList.remove("active");
   });
 
-  document
-    .querySelector('.bottom-nav-item[onclick="bottomNavSearch()"]')
-    .classList.add("active");
+  const searchBtn = document.querySelector(
+    '.bottom-nav-item[onclick="bottomNavSearch()"]'
+  );
+
+  if (searchBtn) {
+    searchBtn.classList.add("active");
+  }
 
   const search = document.getElementById("search");
 
