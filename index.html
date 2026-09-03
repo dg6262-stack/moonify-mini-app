@@ -2977,7 +2977,7 @@ function setupPlayingNowProgress() {
   }
 
   audio.addEventListener("loadedmetadata", function () {
-    progress.max = audio.duration || 0;
+    progress.max = 100;
     duration.textContent = formatTime(audio.duration);
   });
 
