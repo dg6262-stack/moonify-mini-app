@@ -1772,6 +1772,51 @@ body {
     transform: translateY(0);
   }
 }
+
+.playing-now-progress {
+  width: 100%;
+  margin-top: 28px;
+}
+
+#playingNowProgress {
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(160, 120, 210, .28);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+#playingNowProgress::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #a855f7;
+  border: none;
+  box-shadow: 0 0 15px rgba(168, 85, 247, .55);
+}
+
+#playingNowProgress::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #a855f7;
+  border: none;
+  box-shadow: 0 0 15px rgba(168, 85, 247, .55);
+}
+
+.playing-now-time {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 9px;
+  color: #a9a2bd;
+  font-size: 12px;
+}
     
 </style>
       
@@ -2272,9 +2317,11 @@ addToRecentlyPlayed(song);
     }
 
     audio.src = url;
-    audio.style.display = "block";
+audio.style.display = "block";
 
-    audio.play().catch(() => {});
+audio.play().catch(() => {});
+
+setupPlayingNowProgress();
 
     audio.onplay = () => {
   const button =
@@ -2906,6 +2953,58 @@ function updatePlayingNow() {
     cover.innerHTML = "🎵";
   }
 }
+
+function setupPlayingNowProgress() {
+
+  const audio = document.getElementById("moonifyAudio");
+  const progress = document.getElementById("playingNowProgress");
+  const currentTime = document.getElementById("playingNowCurrentTime");
+  const duration = document.getElementById("playingNowDuration");
+
+  if (!audio || !progress || !currentTime || !duration) {
+    return;
+  }
+
+  function formatTime(seconds) {
+    if (!Number.isFinite(seconds)) {
+      return "0:00";
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+
+    return minutes + ":" + String(secs).padStart(2, "0");
+  }
+
+  audio.addEventListener("loadedmetadata", function () {
+    progress.max = audio.duration || 0;
+    duration.textContent = formatTime(audio.duration);
+  });
+
+  audio.addEventListener("timeupdate", function () {
+
+    if (audio.duration) {
+      progress.value =
+        (audio.currentTime / audio.duration) * 100;
+    }
+
+    currentTime.textContent =
+      formatTime(audio.currentTime);
+
+    duration.textContent =
+      formatTime(audio.duration);
+  });
+
+  progress.addEventListener("input", function () {
+
+    if (!audio.duration) {
+      return;
+    }
+
+    audio.currentTime =
+      (Number(progress.value) / 100) * audio.duration;
+  });
+}
   
 function bottomNavLibrary() {
   document.querySelectorAll(".bottom-nav-item").forEach(btn => {
@@ -3121,6 +3220,24 @@ displayRecentlyPlayed();
       </div>
     </div>
 
+    <div class="playing-now-progress">
+
+  <input
+    type="range"
+    id="playingNowProgress"
+    min="0"
+    max="100"
+    value="0"
+    step="0.1"
+  >
+
+  <div class="playing-now-time">
+    <span id="playingNowCurrentTime">0:00</span>
+    <span id="playingNowDuration">0:00</span>
+  </div>
+
+    </div>
+    
     <div class="playing-now-controls">
       <button type="button" onclick="previousSong()">⏮</button>
 
