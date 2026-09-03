@@ -2389,6 +2389,13 @@ audio.play().catch(() => {});
 setupPlayingNowProgress();
 
     audio.onplay = () => {
+
+    const playingNowCover = document.getElementById("playingNowCover");
+
+if (playingNowCover) {
+  playingNowCover.classList.add("is-playing");
+}  
+      
   const button =
     document.querySelector(
       ".player-controls button:nth-child(2)"
@@ -2419,6 +2426,13 @@ setupPlayingNowProgress();
 };
 
 audio.onpause = () => {
+
+const playingNowCover = document.getElementById("playingNowCover");
+
+if (playingNowCover) {
+  playingNowCover.classList.remove("is-playing");
+}
+  
   const button =
     document.querySelector(
       ".player-controls button:nth-child(2)"
