@@ -2277,71 +2277,70 @@ addToRecentlyPlayed(song);
     audio.play().catch(() => {});
 
     audio.onplay = () => {
-      const button =
-        document.querySelector(
-          ".player-controls button:nth-child(2)"
-        );
+  const button =
+    document.querySelector(
+      ".player-controls button:nth-child(2)"
+    );
 
-      if (button) {
-        button.innerHTML = `
-  <svg class="main-play-icon" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
-  </svg>
-`;
-      }
-    };
+  if (button) {
+    button.innerHTML = `
+      <svg class="main-play-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
+      </svg>
+    `;
+  }
 
-      const playingNowButton =
-        document.getElementById("playingNowPlayButton");
+  const playingNowButton =
+    document.getElementById("playingNowPlayButton");
 
-      if (playingNowButton) {
-        playingNowButton.innerHTML = `
-          <svg
-            class="now-playing-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path d="M8 5v14l11-7L8 5z"></path>
-          </svg>
-        `;
-      }
-    
-    audio.onpause = () => {
-      const button =
-        document.querySelector(
-          ".player-controls button:nth-child(2)"
-        );
+  if (playingNowButton) {
+    playingNowButton.innerHTML = `
+      <svg
+        class="now-playing-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
+      </svg>
+    `;
+  }
+};
 
-      if (button) {
-        button.innerHTML = `
-  <svg class="main-play-icon" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M8 5v14l11-7L8 5z"></path>
-  </svg>
-`;
-      }
-    };
+audio.onpause = () => {
+  const button =
+    document.querySelector(
+      ".player-controls button:nth-child(2)"
+    );
 
-      const playingNowButton =
-        document.getElementById("playingNowPlayButton");
+  if (button) {
+    button.innerHTML = `
+      <svg class="main-play-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8 5v14l11-7L8 5z"></path>
+      </svg>
+    `;
+  }
 
-      if (playingNowButton) {
-        playingNowButton.innerHTML = `
-          <svg
-            class="now-playing-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
-          </svg>
-        `;
-      }
-    
-    player.style.display = "none";
+  const playingNowButton =
+    document.getElementById("playingNowPlayButton");
+
+  if (playingNowButton) {
+    playingNowButton.innerHTML = `
+      <svg
+        class="now-playing-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path d="M8 5v14l11-7L8 5z"></path>
+      </svg>
+    `;
+  }
+};
+
+player.style.display = "none";
 
 openPlayingNow();
 
-    return;
-  }
+return;
 
   const videoId = getYouTubeVideoId(url);
 
