@@ -1846,6 +1846,42 @@ body {
   height: 46px;
   fill: #fff !important;
 }
+
+.playing-now-cover {
+  box-shadow:
+    0 0 25px rgba(168, 85, 247, .25),
+    0 15px 40px rgba(0, 0, 0, .45);
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.playing-now-cover img {
+  transition: transform .5s ease;
+}
+
+.playing-now-cover:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 35px rgba(168, 85, 247, .38),
+    0 18px 45px rgba(0, 0, 0, .5);
+}
+
+.playing-now-cover:hover img {
+  transform: scale(1.03);
+}
+
+.playing-now-cover.is-playing {
+  animation: coverPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes coverPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.015);
+  }
+}
     
 </style>
       
