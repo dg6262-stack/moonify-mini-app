@@ -1710,6 +1710,28 @@ body {
   background: linear-gradient(135deg,#a855f7,#7c3aed);
   font-size: 23px;
 }
+
+.playing-now-controls .playing-now-main {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  color: #fff;
+  font-size: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 25px rgba(168, 85, 247, .35),
+    0 10px 30px rgba(0, 0, 0, .35);
+  border: 1px solid rgba(196, 140, 255, .45);
+}
+
+.playing-now-main .now-playing-icon {
+  width: 28px;
+  height: 28px;
+  fill: #fff;
+}
     
 /* SEARCH RESULTS POLISH */
 
@@ -2269,6 +2291,21 @@ addToRecentlyPlayed(song);
       }
     };
 
+      const playingNowButton =
+        document.getElementById("playingNowPlayButton");
+
+      if (playingNowButton) {
+        playingNowButton.innerHTML = `
+          <svg
+            class="now-playing-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M8 5v14l11-7L8 5z"></path>
+          </svg>
+        `;
+      }
+    
     audio.onpause = () => {
       const button =
         document.querySelector(
@@ -2284,6 +2321,21 @@ addToRecentlyPlayed(song);
       }
     };
 
+      const playingNowButton =
+        document.getElementById("playingNowPlayButton");
+
+      if (playingNowButton) {
+        playingNowButton.innerHTML = `
+          <svg
+            class="now-playing-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
+          </svg>
+        `;
+      }
+    
     player.style.display = "none";
 
 openPlayingNow();
