@@ -3463,7 +3463,7 @@ displayRecentlyPlayed();
 
 </div>
 
-<div id="miniPlayer" class="mini-player">
+<div id="miniPlayer" class="mini-player" onclick="openPlayingNow()">
 
   <img id="miniPlayerCover" src="" alt="Cover">
 
@@ -3473,10 +3473,10 @@ displayRecentlyPlayed();
   </div>
 
   <button
-    id="miniPlayerPlayButton"
-    type="button"
-    onclick="togglePlay()"
-  >
+  id="miniPlayerPlayButton"
+  type="button"
+  onclick="event.stopPropagation(); togglePlay()"
+>
     ▶
   </button>
 
