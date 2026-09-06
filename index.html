@@ -1946,6 +1946,23 @@ cursor: pointer;
   height: 20px;
   fill: currentColor;
 }
+
+.up-next {
+  margin-top: 20px;
+}
+
+.up-next-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+#upNextList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
     
 </style>
       
@@ -2409,7 +2426,8 @@ if (miniCover) {
 }
   
 updatePlayingNow();
-
+updateUpNext();
+  
 addToRecentlyPlayed(song);
   
   const player = document.getElementById("player");
@@ -3138,6 +3156,40 @@ function updatePlayingNow() {
   }
 }
 
+function updateUpNext() {
+  const list = document.getElementById("upNextList");
+
+  if (!list || !songs.length) return;
+
+  list.innerHTML = songs
+    .map((song, index) => {
+      if (index === currentSongIndex) return "";
+
+      return `
+        <div class="song" onclick="playSong(${index}, '${encodeURIComponent(song.url || "")}')">
+          <div class="cover">
+            ${
+              song.cover_url
+                ? `<img src="${escapeHtml(song.cover_url)}" alt="Cover">`
+                : "🎵"
+            }
+          </div>
+
+          <div class="info">
+            <div class="title">
+              ${escapeHtml(song.title || "Unknown")}
+            </div>
+
+            <div class="artist">
+              ${escapeHtml(song.artist || "Unknown Artist")}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+  
 function setupPlayingNowProgress() {
 
   const audio = document.getElementById("moonifyAudio");
@@ -3436,6 +3488,11 @@ displayRecentlyPlayed();
       <button type="button" onclick="nextSong()">⏭</button>
     </div>
 
+    <div id="upNext" class="up-next">
+  <div class="up-next-title">Up Next</div>
+  <div id="upNextList"></div>
+    </div>
+     
   </div>
 
 </div>
