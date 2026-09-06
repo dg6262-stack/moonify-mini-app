@@ -1882,6 +1882,60 @@ body {
     transform: scale(1.015);
   }
 }
+
+.mini-player {
+  position: fixed;
+  left: 15px;
+  right: 15px;
+  bottom: 75px;
+  height: 64px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 18px;
+  background: rgba(20,17,32,.96);
+  backdrop-filter: blur(14px);
+  z-index: 5000;
+}
+
+.mini-player img {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.mini-player-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#miniPlayerTitle {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#miniPlayerArtist {
+  color: #8f8aa3;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+#miniPlayerPlayButton {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: #8b5cf6;
+  color: #fff;
+  font-size: 18px;
+}
     
 </style>
       
@@ -2331,6 +2385,19 @@ function playSong(index, encodedUrl) {
 
 const song = songs[index];
 
+const miniPlayer = document.getElementById("miniPlayer");
+const miniCover = document.getElementById("miniPlayerCover");
+const miniTitle = document.getElementById("miniPlayerTitle");
+const miniArtist = document.getElementById("miniPlayerArtist");
+
+if (miniPlayer) miniPlayer.style.display = "flex";
+if (miniTitle) miniTitle.textContent = song?.title || "Now Playing";
+if (miniArtist) miniArtist.textContent = song?.artist || "Moonify";
+
+if (miniCover) {
+  miniCover.src = song?.cover_url || "";
+}
+  
 updatePlayingNow();
 
 addToRecentlyPlayed(song);
@@ -2423,6 +2490,18 @@ if (playingNowCover) {
       </svg>
     `;
   }
+
+   const miniButton =
+  document.getElementById("miniPlayerPlayButton");
+
+if (miniButton) {
+  miniButton.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>
+    </svg>
+  `;
+}
+      
 };
 
 audio.onpause = () => {
@@ -2460,6 +2539,18 @@ if (playingNowCover) {
       </svg>
     `;
   }
+
+   const miniButton =
+  document.getElementById("miniPlayerPlayButton");
+
+if (miniButton) {
+  miniButton.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5v14l11-7L8 5z"></path>
+    </svg>
+  `;
+}
+  
 };
 
 audio.onended = () => {
@@ -3368,6 +3459,25 @@ displayRecentlyPlayed();
   >
     <span class="bottom-nav-icon">♫</span>
     <span>Library</span>
+  </button>
+
+</div>
+
+<div id="miniPlayer" class="mini-player">
+
+  <img id="miniPlayerCover" src="" alt="Cover">
+
+  <div class="mini-player-info">
+    <div id="miniPlayerTitle">Nothing playing</div>
+    <div id="miniPlayerArtist">Moonify</div>
+  </div>
+
+  <button
+    id="miniPlayerPlayButton"
+    type="button"
+    onclick="togglePlay()"
+  >
+    ▶
   </button>
 
 </div>
