@@ -2031,6 +2031,19 @@ cursor: pointer;
 .up-next-play:hover {
   transform: scale(1.05);
 }
+
+#upNextList .song.is-current {
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+#upNextList .song.is-current .title {
+  color: #a78bfa;
+}
+
+#upNextList .song.is-current .up-next-play {
+  transform: scale(1.05);
+}
     
 </style>
       
@@ -3231,10 +3244,13 @@ function updateUpNext() {
 
   list.innerHTML = songs
     .map((song, index) => {
-      if (index === currentSongIndex) return "";
+      const isCurrent = index === currentSongIndex;
 
       return `
-        <div class="song" onclick="playSong(${index}, '${encodeURIComponent(song.url || "")}')">
+  <div
+    class="song ${isCurrent ? "is-current" : ""}"
+    onclick="playSong(${index}, '${encodeURIComponent(song.url || "")}')"
+  >
           <div class="cover">
             ${
               song.cover_url
