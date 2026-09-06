@@ -1898,6 +1898,10 @@ body {
   background: rgba(20,17,32,.96);
   backdrop-filter: blur(14px);
   z-index: 5000;
+
+ transition: transform 0.25s ease, opacity 0.25s ease;
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+cursor: pointer; 
 }
 
 .mini-player img {
@@ -1935,6 +1939,12 @@ body {
   background: #8b5cf6;
   color: #fff;
   font-size: 18px;
+}
+
+#miniPlayerPlayButton svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
 }
     
 </style>
