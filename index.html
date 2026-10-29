@@ -2746,32 +2746,51 @@ button:focus-visible {
   }
     }
 
+
+.headphone-glow {
+  width: 190px;
+  height: 190px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  background: radial-gradient(
+    circle,
+    rgba(155, 70, 255, 0.3),
+    transparent 72%
+  );
+}
+
 .moonify-headphones {
   display: block;
-  width: 100%;
-  max-width: 260px;
-  height: auto;
+  width: 190px;
+  height: 190px;
+  max-width: none;
   object-fit: contain;
+  border-radius: 50%;
   filter:
-    drop-shadow(0 0 12px rgba(157, 67, 255, 0.55))
-    drop-shadow(0 0 24px rgba(104, 50, 255, 0.25));
+    drop-shadow(0 0 12px rgba(160, 70, 255, 0.65))
+    drop-shadow(0 0 25px rgba(110, 45, 255, 0.35));
   animation: moonifyHeadphoneFloat 4s ease-in-out infinite;
 }
 
 @keyframes moonifyHeadphoneFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 @media (max-width: 480px) {
-  .moonify-headphones {
-    max-width: 200px;
+  .headphone-glow {
+    width: 125px;
+    height: 125px;
   }
-}
+
+  .moonify-headphones {
+    width: 125px;
+    height: 125px;
+  }
+    }
       
 </style>
       
