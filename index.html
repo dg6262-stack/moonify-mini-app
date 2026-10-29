@@ -2745,7 +2745,34 @@ button:focus-visible {
     scroll-behavior: auto !important;
   }
     }
-    
+
+.moonify-headphones {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 12px rgba(157, 67, 255, 0.55))
+    drop-shadow(0 0 24px rgba(104, 50, 255, 0.25));
+  animation: moonifyHeadphoneFloat 4s ease-in-out infinite;
+}
+
+@keyframes moonifyHeadphoneFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 480px) {
+  .moonify-headphones {
+    max-width: 200px;
+  }
+}
+      
 </style>
       
 </head>
@@ -2867,8 +2894,15 @@ button:focus-visible {
     </div>
   </div>
   <div class="welcome-icon">
+  
   <div class="headphone-glow">
-  <svg class="moonify-headphone-svg" viewBox="0 0 160 140" aria-hidden="true">
+    <img
+      src="./headphones.png"
+      class="moonify-headphones"
+      alt="Moonify Premium Headphones"
+    />
+  </div>
+    
     <path
       d="M35 75V62C35 29 55 12 80 12s45 17 45 50v13"
       fill="none"
