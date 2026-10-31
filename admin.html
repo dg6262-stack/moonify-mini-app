@@ -179,7 +179,6 @@
 
   </div>
 
-
   <!-- ADMIN PANEL -->
   <div id="adminPanel">
 
@@ -197,34 +196,34 @@
         placeholder="Artist"
       >
 
-    <label class="file-label">
-  🎵 Select MP3 File
-</label>
+      <label class="file-label">
+        🎵 Select MP3 File
+      </label>
 
-<label>
-  Cover Image
-</label>
+      <label>
+        Cover Image
+      </label>
 
-<input
-  id="coverImage"
-  type="file"
-  accept="image/jpeg,image/png,image/webp"
->
+      <input
+        id="coverImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+      >
 
-<div class="hint">
-  Song ki cover image select karo.
-</div>
+      <div class="hint">
+        Song ki cover image select karo.
+      </div>
 
-<input
-  id="audioFile"
-  type="file"
-  accept=".mp3,audio/mpeg"
-  required
->
+      <input
+        id="audioFile"
+        type="file"
+        accept=".mp3,audio/mpeg"
+        required
+      >
 
-<div class="hint">
-  Apni MP3 file select karo. Publish dabane par song upload ho jayega.
-</div>
+      <div class="hint">
+        Apni MP3 file select karo. Publish dabane par song upload ho jayega.
+      </div>
 
       <button
         id="publishButton"
@@ -253,7 +252,6 @@
 
     </div>
 
-
     <h2 style="margin-top:30px;">
       Published Songs
     </h2>
@@ -264,11 +262,11 @@
 
 </div>
 
-
 <script>
 
 let supabaseClient = null;
 let editingId = null;
+let editingSongUrl = null;
 
 
 /* =========================
@@ -289,11 +287,11 @@ async function init() {
     }
 
     const config =
-  await response.json();
+      await response.json();
 
-console.log("SUPABASE URL:", config.url);
+    console.log("SUPABASE URL:", config.url);
 
-if (!config.url || !config.key) {
+    if (!config.url || !config.key) {
       throw new Error(
         "Supabase configuration is missing."
       );
@@ -482,7 +480,6 @@ async function uploadMP3(file) {
   const filePath =
     "uploads/" + uniqueName;
 
-
   const { error } =
     await supabaseClient
       .storage
@@ -503,7 +500,6 @@ async function uploadMP3(file) {
     );
   }
 
-
   const {
     data
   } =
@@ -514,6 +510,12 @@ async function uploadMP3(file) {
 
   return data.publicUrl;
 }
+
+
+/* =========================
+   UPLOAD COVER IMAGE
+========================= */
+
 async function uploadCoverImage(file) {
 
   if (!file) {
@@ -564,7 +566,8 @@ async function uploadCoverImage(file) {
       .getPublicUrl(filePath);
 
   return data.publicUrl;
-    }
+}
+
 
 /* =========================
    PUBLISH SONG
@@ -587,21 +590,15 @@ async function publishSong() {
       "audioFile"
     ).files[0];
 
-  const directUrl =
-  document.getElementById(
-    "url"
-  ).value.trim();
-
-const coverFile =
-  document.getElementById(
-    "coverImage"
-  ).files[0];
+  const coverFile =
+    document.getElementById(
+      "coverImage"
+    ).files[0];
 
   const status =
     document.getElementById(
       "status"
     );
-
 
   if (!title || !artist) {
 
@@ -611,53 +608,45 @@ const coverFile =
     return;
   }
 
-
   if (!file) {
-  status.textContent = "❌ Please select an MP3 file.";
-  return;
+    status.textContent =
+      "❌ Please select an MP3 file.";
+    return;
   }
-
 
   try {
 
     status.textContent =
-      "Uploading song...";
+      "Uploading MP3...";
 
-    status.textContent = "Uploading MP3...";
+    const songUrl =
+      await uploadMP3(file);
 
-const songUrl = await uploadMP3(file);
+    let coverUrl = null;
 
-let coverUrl = null;
+    if (coverFile) {
 
-if (coverFile) {
+      coverUrl =
+        await uploadCoverImage(coverFile);
 
-  coverUrl =
-    await uploadCoverImage(coverFile);
-
-  }
+    }
 
     status.textContent =
       "Publishing...";
-
 
     const { error } =
       await supabaseClient
         .from("songs")
         .insert({
-  title: title,
-  artist: artist,
-  url: songUrl,
-  cover_url: coverUrl
-});
-
+          title: title,
+          artist: artist,
+          url: songUrl,
+          cover_url: coverUrl
+        });
 
     if (error) {
-
-      throw new Error(
-        error.message
-      );
+      throw new Error(error.message);
     }
-
 
     status.textContent =
       "✅ Song published successfully!";
@@ -693,34 +682,32 @@ function startEdit(song) {
   ).value =
     song.artist || "";
 
-  document.getElementById(
-    "url"
-  ).value =
+  editingSongUrl =
     song.url || "";
 
   document.getElementById(
     "audioFile"
   ).value = "";
 
+  document.getElementById(
+    "coverImage"
+  ).value = "";
 
   document.getElementById(
     "publishButton"
   ).textContent =
     "💾 Update Song";
 
-
   document.getElementById(
     "cancelButton"
   ).style.display =
     "block";
-
 
   document.getElementById(
     "status"
   ).textContent =
     "Editing: " +
     (song.title || "Song");
-
 
   window.scrollTo({
     top: 0,
@@ -750,16 +737,10 @@ async function updateSong() {
       "audioFile"
     ).files[0];
 
-  const currentUrl =
-    document.getElementById(
-      "url"
-    ).value.trim();
-
   const status =
     document.getElementById(
       "status"
     );
-
 
   if (!title || !artist) {
 
@@ -769,16 +750,13 @@ async function updateSong() {
     return;
   }
 
-
   try {
 
     status.textContent =
       "Updating...";
 
-
     let newUrl =
-      currentUrl;
-
+      editingSongUrl;
 
     if (file) {
 
@@ -790,14 +768,12 @@ async function updateSong() {
 
     }
 
-
     if (!newUrl) {
 
       throw new Error(
         "MP3 URL is required."
       );
     }
-
 
     const { error } =
       await supabaseClient
@@ -809,14 +785,9 @@ async function updateSong() {
         })
         .eq("id", editingId);
 
-
     if (error) {
-
-      throw new Error(
-        error.message
-      );
+      throw new Error(error.message);
     }
-
 
     status.textContent =
       "✅ Song updated successfully!";
@@ -855,7 +826,6 @@ async function deleteSong(
     return;
   }
 
-
   const status =
     document.getElementById(
       "status"
@@ -864,13 +834,11 @@ async function deleteSong(
   status.textContent =
     "Deleting...";
 
-
   const { error } =
     await supabaseClient
       .from("songs")
       .delete()
       .eq("id", id);
-
 
   if (error) {
 
@@ -880,15 +848,12 @@ async function deleteSong(
     return;
   }
 
-
   status.textContent =
     "✅ Song deleted successfully!";
-
 
   if (editingId === id) {
     cancelEdit();
   }
-
 
   await loadSongs();
 }
@@ -925,19 +890,19 @@ function clearForm() {
   ).value = "";
 
   document.getElementById(
-    "url"
-  ).value = "";
-
-  document.getElementById(
     "audioFile"
   ).value = "";
 
+  document.getElementById(
+    "coverImage"
+  ).value = "";
+
+  editingSongUrl = null;
 
   document.getElementById(
     "publishButton"
   ).textContent =
     "🚀 Publish Song";
-
 
   document.getElementById(
     "cancelButton"
@@ -957,7 +922,6 @@ async function loadSongs() {
       "songList"
     );
 
-
   const { data, error } =
     await supabaseClient
       .from("songs")
@@ -971,19 +935,15 @@ async function loadSongs() {
         }
       );
 
-
   if (error) {
 
     list.innerHTML =
       "<p style='color:#ff8585;'>❌ " +
-      escapeHtml(
-        error.message
-      ) +
+      escapeHtml(error.message) +
       "</p>";
 
     return;
   }
-
 
   if (!data || data.length === 0) {
 
@@ -992,7 +952,6 @@ async function loadSongs() {
 
     return;
   }
-
 
   list.innerHTML =
     data.map(song => `
@@ -1053,26 +1012,11 @@ async function loadSongs() {
 function escapeHtml(text) {
 
   return String(text)
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 
