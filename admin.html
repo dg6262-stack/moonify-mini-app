@@ -612,12 +612,9 @@ const coverFile =
   }
 
 
-  if (!file && !directUrl) {
-
-    status.textContent =
-      "⚠️ Select an MP3 file or enter a direct MP3 URL.";
-
-    return;
+  if (!file) {
+  status.textContent = "❌ Please select an MP3 file.";
+  return;
   }
 
 
@@ -626,15 +623,9 @@ const coverFile =
     status.textContent =
       "Uploading song...";
 
-    let songUrl =
-  directUrl;
+    status.textContent = "Uploading MP3...";
 
-if (file) {
-
-  songUrl =
-    await uploadMP3(file);
-
-}
+const songUrl = await uploadMP3(file);
 
 let coverUrl = null;
 
