@@ -427,8 +427,42 @@ function showAdminPanel() {
   ).style.display = "block";
 
   loadSongs();
+  loadMoonifyAnalytics();
 }
 
+async function loadMoonifyAnalytics() {
+  const card = document.getElementById("analyticsCard");
+  const status = document.getElementById("analyticsStatus");
+
+  try {
+    const { data: { user }, error: userError } =
+      await supabaseClient.auth.getUser();
+
+    if (userError || !user || user.email !== "dg62628172@gmail.com") {
+      card.style.display = "none";
+      return;
+    }
+
+    card.style.display = "block";
+    status.textContent = "Loading...";
+
+    const { data, error } =
+      await supabaseClient.rpc("moonify_admin_analytics");
+
+    if (error) throw error;
+
+    document.getElementById("onlineNow").textContent =
+      data.online_now ?? 0;
+
+    document.getElementById("todayVisitors").textContent =
+      data.today_visitors ?? 0;
+
+    status.textContent = "Updated successfully";
+  } catch (error) {
+    status.textContent = "Analytics error: " + error.message;
+  }
+}
+  
 
 /* =========================
    PUBLISH OR UPDATE
