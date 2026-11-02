@@ -4298,46 +4298,6 @@ async function startMoonifyAnalytics() {
 
 startMoonifyAnalytics();
 
-// MOONIFY VISITOR TRACKING
-async function startMoonifyAnalytics() {
-  try {
-    const response = await fetch("/api/config");
-    if (!response.ok) return;
-
-    const config = await response.json();
-    if (!config.url || !config.key) return;
-
-    const client = window.supabase.createClient(
-      config.url,
-      config.key
-    );
-
-    let token = localStorage.getItem("moonifyVisitorToken");
-
-    if (!token) {
-      token = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
-        const r = Math.random() * 16 | 0;
-        return (c === "x" ? r : (r & 3 | 8)).toString(16);
-      });
-
-      localStorage.setItem("moonifyVisitorToken", token);
-    }
-
-    const ping = async () => {
-      await client.rpc("moonify_ping", {
-        visitor_token: token
-      });
-    };
-
-    await ping();
-    setInterval(ping, 30000);
-
-  } catch (error) {
-    console.warn("Moonify analytics:", error);
-  }
-}
-
-startMoonifyAnalytics();
   
 // Existing functions — DO NOT REMOVE
 loadSongs();
