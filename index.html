@@ -4224,6 +4224,83 @@ function displayLibrarySongs() {
     </div>
   `).join("");
 }
+
+// 🌙 MOONIFY ANONYMOUS VISITOR ANALYTICS
+
+async function startMoonifyAnalytics() {
+  try {
+    // Har browser ka anonymous visitor token
+    let visitorToken = localStorage.getItem("moonifyVisitorToken");
+
+    if (!visitorToken) {
+      if (window.crypto && crypto.randomUUID) {
+        visitorToken = crypto.randomUUID();
+      } else {
+        visitorToken =
+          Date.now().toString(36) +
+          Math.random().toString(36).slice(2) +
+          Math.random().toString(36).slice(2);
+      }
+
+      localStorage.setItem(
+        "moonifyVisitorToken",
+        visitorToken
+      );
+    }
+
+    // Supabase configuration
+    const response = await fetch("/api/config");
+
+    if (!response.ok) {
+      throw new Error("Config load failed");
+    }
+
+    const config = await response.json();
+
+    if (!config.url || !config.key) {
+      throw new Error("Supabase config missing");
+    }
+
+    const analyticsClient = window.supabase.createClient(
+      config.url,
+      config.key
+    );
+
+    // Visitor ping
+    const sendPing = async () => {
+      const { error } = await analyticsClient.rpc(
+        "moonify_ping",
+        {
+          visitor_token: visitorToken
+        }
+      );
+
+      if (error) {
+        console.warn("Analytics ping failed:", error.message);
+      }
+    };
+
+    // First ping immediately
+    await sendPing();
+
+    // Then every 30 seconds
+    if (!window.moonifyAnalyticsTimer) {
+      window.moonifyAnalyticsTimer = setInterval(
+        sendPing,
+        30000
+      );
+    }
+
+  } catch (error) {
+    console.warn("Moonify analytics error:", error);
+  }
+}
+
+startMoonifyAnalytics();
+
+// Existing functions — DO NOT REMOVE
+loadSongs();
+displayRecentlyPlayed();
   
 loadSongs();
 displayRecentlyPlayed();
