@@ -4271,7 +4271,7 @@ async function startMoonifyAnalytics() {
       const { error } = await analyticsClient.rpc(
         "moonify_ping",
         {
-          visitor_token: visitorToken
+          p_visitor_token: visitorToken
         }
       );
 
